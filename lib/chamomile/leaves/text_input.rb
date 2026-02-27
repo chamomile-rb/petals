@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 module Chamomile
   module Leaves
+    # Single-line text input with cursor movement, editing, and echo modes.
     class TextInput
       ECHO_NORMAL   = :normal
       ECHO_PASSWORD = :password
@@ -51,7 +54,7 @@ module Chamomile
 
       def value=(v)
         v = v.to_s
-        v = v[0, @char_limit] if @char_limit > 0 && v.length > @char_limit
+        v = v[0, @char_limit] if @char_limit.positive? && v.length > @char_limit
         @value = v
         @position = @position.clamp(0, @value.length)
         run_validate
@@ -79,9 +82,7 @@ module Chamomile
       end
 
       def view
-        if @value.empty? && !@placeholder.empty? && !@focused
-          return "#{@prompt}#{@placeholder}"
-        end
+        return "#{@prompt}#{@placeholder}" if @value.empty? && !@placeholder.empty? && !@focused
 
         display = build_display_value
         visible = visible_portion(display)
@@ -91,7 +92,7 @@ module Chamomile
           if cursor_pos >= 0 && cursor_pos < visible.length
             before = visible[0, cursor_pos]
             cursor_char = visible[cursor_pos]
-            after = visible[cursor_pos + 1..]
+            after = visible[(cursor_pos + 1)..]
             "#{@prompt}#{before}\e[7m#{cursor_char}\e[0m#{after}"
           else
             # Cursor at end
@@ -114,7 +115,7 @@ module Chamomile
         elsif kb.key_matches?(msg, @key_map, :character_forward)
           @position += 1 if @position < @value.length
         elsif kb.key_matches?(msg, @key_map, :character_backward)
-          @position -= 1 if @position > 0
+          @position -= 1 if @position.positive?
         elsif kb.key_matches?(msg, @key_map, :word_forward)
           @position = next_word_boundary
         elsif kb.key_matches?(msg, @key_map, :word_backward)
@@ -142,9 +143,10 @@ module Chamomile
         text = msg.content.gsub(/[^[:print:]\t]/, "")
         return if text.empty?
 
-        if @char_limit > 0
+        if @char_limit.positive?
           available = @char_limit - @value.length
           return if available <= 0
+
           text = text[0, available] if text.length > available
         end
 
@@ -162,9 +164,7 @@ module Chamomile
       end
 
       def insert_char(char)
-        if @char_limit > 0 && @value.length >= @char_limit
-          return
-        end
+        return if @char_limit.positive? && @value.length >= @char_limit
 
         @value = @value[0, @position].to_s + char + @value[@position..].to_s
         @position += 1
@@ -174,7 +174,7 @@ module Chamomile
       # Deletion operations
 
       def delete_char_backward
-        return if @position == 0
+        return if @position.zero?
 
         @value = @value[0, @position - 1].to_s + @value[@position..].to_s
         @position -= 1
@@ -184,12 +184,12 @@ module Chamomile
       def delete_char_forward
         return if @position >= @value.length
 
-        @value = @value[0, @position].to_s + @value[@position + 1..].to_s
+        @value = @value[0, @position].to_s + @value[(@position + 1)..].to_s
         run_validate
       end
 
       def delete_word_backward
-        return if @position == 0
+        return if @position.zero?
 
         target = prev_word_boundary
         @value = @value[0, target].to_s + @value[@position..].to_s
@@ -206,7 +206,7 @@ module Chamomile
       end
 
       def delete_before_cursor
-        return if @position == 0
+        return if @position.zero?
 
         @value = @value[@position..].to_s
         @position = 0
@@ -239,29 +239,29 @@ module Chamomile
 
         pos = @position
         # Skip spaces behind cursor
-        pos -= 1 while pos > 0 && @value[pos - 1] == " "
+        pos -= 1 while pos.positive? && @value[pos - 1] == " "
         # Skip non-space chars
-        pos -= 1 while pos > 0 && @value[pos - 1] != " "
+        pos -= 1 while pos.positive? && @value[pos - 1] != " "
         pos
       end
 
       # Horizontal scrolling
 
       def recalc_offset
-        if @width > 0
+        if @width.positive?
           content_width = @width - @prompt.length
           content_width = 1 if content_width < 1
 
           @offset = @position if @position < @offset
           @offset = @position - content_width + 1 if @position >= @offset + content_width
-          @offset = 0 if @offset < 0
+          @offset = 0 if @offset.negative?
         else
           @offset = 0
         end
       end
 
       def visible_portion(display)
-        if @width > 0
+        if @width.positive?
           content_width = @width - @prompt.length
           content_width = 1 if content_width < 1
           display[@offset, content_width] || ""
@@ -286,7 +286,7 @@ module Chamomile
       # Validation
 
       def run_validate
-        @err = @validate ? @validate.call(@value) : nil
+        @err = @validate&.call(@value)
       end
     end
   end

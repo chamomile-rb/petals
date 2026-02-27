@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 module Chamomile
   module Leaves
     SpinnerTickMsg = Data.define(:id, :tag, :time)
 
+    # Animated spinner with configurable frame types and tick-based updates.
     class Spinner
       @next_id = 0
       @id_mutex = Mutex.new

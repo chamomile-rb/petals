@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Chamomile
   module Leaves
     SpinnerType = Data.define(:frames, :fps)

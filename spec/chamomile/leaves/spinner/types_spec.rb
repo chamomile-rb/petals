@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 RSpec.describe Chamomile::Leaves::SpinnerType do
@@ -14,22 +16,22 @@ RSpec.describe Chamomile::Leaves::SpinnerType do
 end
 
 RSpec.describe Chamomile::Leaves::Spinners do
-  ALL_TYPES = {
-    LINE:      { frame_count: 4, fps: 10 },
-    DOT:       { frame_count: 8, fps: 10 },
-    MINI_DOT:  { frame_count: 10, fps: 12 },
-    JUMP:      { frame_count: 7, fps: 10 },
-    PULSE:     { frame_count: 4, fps: 8 },
-    POINTS:    { frame_count: 4, fps: 7 },
-    GLOBE:     { frame_count: 3, fps: 4 },
-    MOON:      { frame_count: 8, fps: 8 },
-    MONKEY:    { frame_count: 3, fps: 3 },
-    METER:     { frame_count: 7, fps: 7 },
+  all_types = {
+    LINE: { frame_count: 4, fps: 10 },
+    DOT: { frame_count: 8, fps: 10 },
+    MINI_DOT: { frame_count: 10, fps: 12 },
+    JUMP: { frame_count: 7, fps: 10 },
+    PULSE: { frame_count: 4, fps: 8 },
+    POINTS: { frame_count: 4, fps: 7 },
+    GLOBE: { frame_count: 3, fps: 4 },
+    MOON: { frame_count: 8, fps: 8 },
+    MONKEY: { frame_count: 3, fps: 3 },
+    METER: { frame_count: 7, fps: 7 },
     HAMBURGER: { frame_count: 4, fps: 3 },
-    ELLIPSIS:  { frame_count: 4, fps: 3 },
+    ELLIPSIS: { frame_count: 4, fps: 3 },
   }.freeze
 
-  ALL_TYPES.each do |name, expected|
+  all_types.each do |name, expected|
     describe name.to_s do
       let(:spinner_type) { described_class.const_get(name) }
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative "../lib/chamomile/leaves"
 
 class SpinnerDemo
@@ -19,7 +21,7 @@ class SpinnerDemo
     case msg
     when Chamomile::KeyMsg
       case msg.key
-      when "q"     then return [self, quit]
+      when "q" then return [self, quit]
       when :up, "k"
         @type_index = (@type_index - 1) % TYPES.size
         @spinner.spinner_type = current_type
@@ -54,4 +56,4 @@ class SpinnerDemo
   end
 end
 
-Chamomile.run(SpinnerDemo.new)
+Chamomile.run(SpinnerDemo.new) if __FILE__ == $PROGRAM_NAME

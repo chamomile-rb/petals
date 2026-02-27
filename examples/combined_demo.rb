@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative "../lib/chamomile/leaves"
 
 class CombinedDemo
@@ -53,4 +55,4 @@ class CombinedDemo
   end
 end
 
-Chamomile.run(CombinedDemo.new, bracketed_paste: true)
+Chamomile.run(CombinedDemo.new, bracketed_paste: true) if __FILE__ == $PROGRAM_NAME

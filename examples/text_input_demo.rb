@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative "../lib/chamomile/leaves"
 
 class TextInputDemo
@@ -21,6 +23,7 @@ class TextInputDemo
       case msg
       when Chamomile::KeyMsg
         return [self, quit] if msg.key == "q"
+
         if msg.key == :enter
           @submitted = nil
           @input.value = ""
@@ -33,6 +36,7 @@ class TextInputDemo
     case msg
     when Chamomile::KeyMsg
       return [self, quit] if msg.key == :escape
+
       if msg.key == :enter
         @submitted = @input.value
         @input.blur
@@ -68,4 +72,4 @@ class TextInputDemo
   end
 end
 
-Chamomile.run(TextInputDemo.new, bracketed_paste: true)
+Chamomile.run(TextInputDemo.new, bracketed_paste: true) if __FILE__ == $PROGRAM_NAME

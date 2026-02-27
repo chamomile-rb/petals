@@ -1,20 +1,22 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 RSpec.describe Chamomile::Leaves::KeyBinding do
   let(:key_map) do
     {
-      move_left:  [[:left, []], ["h", []], ["b", [:ctrl]]],
+      move_left: [[:left, []], ["h", []], ["b", [:ctrl]]],
       move_right: [[:right, []], ["l", []], ["f", [:ctrl]]],
-      delete:     [[:backspace, [:ctrl, :shift]]],
-      quit:       [["q", []]],
+      delete: [[:backspace, %i[ctrl shift]]],
+      quit: [["q", []]],
     }
   end
 
   describe ".normalize" do
     it "sorts and freezes mod arrays" do
-      raw = { action: [[:key, [:shift, :ctrl]]] }
+      raw = { action: [[:key, %i[shift ctrl]]] }
       normalized = described_class.normalize(raw)
-      expect(normalized[:action][0][1]).to eq([:ctrl, :shift])
+      expect(normalized[:action][0][1]).to eq(%i[ctrl shift])
       expect(normalized[:action][0][1]).to be_frozen
     end
 
@@ -47,7 +49,7 @@ RSpec.describe Chamomile::Leaves::KeyBinding do
     end
 
     it "matches modifiers regardless of order" do
-      msg = Chamomile::KeyMsg.new(key: :backspace, mod: [:shift, :ctrl])
+      msg = Chamomile::KeyMsg.new(key: :backspace, mod: %i[shift ctrl])
       expect(described_class.key_matches?(msg, key_map, :delete)).to be true
     end
 
@@ -81,7 +83,7 @@ RSpec.describe Chamomile::Leaves::KeyBinding do
 
     it "works with normalized key maps" do
       normalized = described_class.normalize(key_map)
-      msg = Chamomile::KeyMsg.new(key: :backspace, mod: [:shift, :ctrl])
+      msg = Chamomile::KeyMsg.new(key: :backspace, mod: %i[shift ctrl])
       expect(described_class.key_matches?(msg, normalized, :delete)).to be true
     end
 

@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 module Chamomile
   module Leaves
+    # Utilities for matching KeyMsg against normalized key maps.
     module KeyBinding
       # Normalize a key map so mod arrays are sorted and frozen.
       # Call once at definition time to avoid per-keystroke allocations.
