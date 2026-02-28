@@ -54,8 +54,7 @@ RSpec.describe Petals::Spinner do
       # Capture tag before update
       allow_any_instance_of(Object).to receive(:sleep)
       msg = spinner.tick_cmd.call
-      result, cmd = spinner.update(msg)
-      expect(result).to equal(spinner)
+      cmd = spinner.update(msg)
       expect(spinner.view).to eq("/") # frame 1 of LINE
       expect(cmd).to respond_to(:call)
     end
@@ -74,7 +73,7 @@ RSpec.describe Petals::Spinner do
 
     it "ignores non-SpinnerTickMsg" do
       spinner = described_class.new
-      _, cmd = spinner.update(Chamomile::KeyMsg.new(key: "a", mod: []))
+      cmd = spinner.update(Chamomile::KeyMsg.new(key: "a", mod: []))
       expect(cmd).to be_nil
       expect(spinner.view).to eq("|")
     end
@@ -82,7 +81,7 @@ RSpec.describe Petals::Spinner do
     it "ignores SpinnerTickMsg with wrong id" do
       spinner = described_class.new
       msg = Petals::SpinnerTickMsg.new(id: -999, tag: 0, time: Time.now)
-      _, cmd = spinner.update(msg)
+      cmd = spinner.update(msg)
       expect(cmd).to be_nil
       expect(spinner.view).to eq("|")
     end
@@ -92,7 +91,7 @@ RSpec.describe Petals::Spinner do
       allow_any_instance_of(Object).to receive(:sleep)
       msg = spinner.tick_cmd.call
       spinner.reset # bumps tag, invalidating msg
-      _, cmd = spinner.update(msg)
+      cmd = spinner.update(msg)
       expect(cmd).to be_nil
       expect(spinner.view).to eq("|")
     end
@@ -119,7 +118,7 @@ RSpec.describe Petals::Spinner do
       allow_any_instance_of(Object).to receive(:sleep)
       msg = spinner.tick_cmd.call
       spinner.reset
-      _, cmd = spinner.update(msg)
+      cmd = spinner.update(msg)
       expect(cmd).to be_nil
     end
   end
@@ -146,7 +145,7 @@ RSpec.describe Petals::Spinner do
       allow_any_instance_of(Object).to receive(:sleep)
       msg = spinner.tick_cmd.call
       spinner.spinner_type = Petals::Spinners::DOT
-      _, cmd = spinner.update(msg)
+      cmd = spinner.update(msg)
       expect(cmd).to be_nil
     end
   end
@@ -161,12 +160,12 @@ RSpec.describe Petals::Spinner do
       msg2 = s2.tick_cmd.call
 
       # s1 ignores s2's tick
-      _, cmd = s1.update(msg2)
+      cmd = s1.update(msg2)
       expect(cmd).to be_nil
       expect(s1.view).to eq("|")
 
       # s1 responds to its own tick
-      _, cmd = s1.update(msg1)
+      cmd = s1.update(msg1)
       expect(cmd).to respond_to(:call)
       expect(s1.view).to eq("/")
     end

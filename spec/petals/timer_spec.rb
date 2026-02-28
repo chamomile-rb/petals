@@ -78,8 +78,7 @@ RSpec.describe Petals::Timer do
       timer = described_class.new(timeout: 10, interval: 1.0)
       allow_any_instance_of(Object).to receive(:sleep)
       msg = timer.start_cmd.call
-      result, cmd = timer.update(msg)
-      expect(result).to equal(timer)
+      cmd = timer.update(msg)
       expect(timer.remaining).to eq(9.0)
       expect(cmd).to respond_to(:call)
     end
@@ -89,12 +88,12 @@ RSpec.describe Petals::Timer do
       allow_any_instance_of(Object).to receive(:sleep)
 
       msg = timer.start_cmd.call
-      _, cmd = timer.update(msg)
+      cmd = timer.update(msg)
       expect(timer.remaining).to eq(4.0)
       expect(cmd).to respond_to(:call)
 
       msg2 = cmd.call
-      _, cmd2 = timer.update(msg2)
+      cmd2 = timer.update(msg2)
       expect(timer.remaining).to eq(3.0)
       expect(cmd2).to respond_to(:call)
     end
@@ -105,14 +104,14 @@ RSpec.describe Petals::Timer do
 
       # Tick 1: 2 -> 1, still running
       msg = timer.start_cmd.call
-      _, cmd = timer.update(msg)
+      cmd = timer.update(msg)
       expect(timer.remaining).to eq(1.0)
       expect(timer.running?).to be true
       expect(cmd).to respond_to(:call)
 
       # Tick 2: 1 -> 0, timer stops and returns timeout_cmd
       msg2 = cmd.call
-      _, cmd2 = timer.update(msg2)
+      cmd2 = timer.update(msg2)
       expect(timer.remaining).to eq(0.0)
       expect(timer.timed_out?).to be true
       expect(timer.running?).to be false
@@ -132,7 +131,7 @@ RSpec.describe Petals::Timer do
       msg = timer.start_cmd.call
       expect(msg).to be_a(Petals::TimerTickMsg)
 
-      _, cmd = timer.update(msg)
+      cmd = timer.update(msg)
       expect(timer.remaining).to eq(0.0)
       expect(timer.timed_out?).to be true
       expect(timer.running?).to be false
@@ -143,7 +142,7 @@ RSpec.describe Petals::Timer do
 
     it "ignores non-TimerTickMsg" do
       timer = described_class.new(timeout: 10)
-      _, cmd = timer.update(Chamomile::KeyMsg.new(key: "a", mod: []))
+      cmd = timer.update(Chamomile::KeyMsg.new(key: "a", mod: []))
       expect(cmd).to be_nil
       expect(timer.remaining).to eq(10.0)
     end
@@ -152,7 +151,7 @@ RSpec.describe Petals::Timer do
       timer = described_class.new(timeout: 10)
       timer.start_cmd
       msg = Petals::TimerTickMsg.new(id: "wrong", tag: 0, time: Time.now)
-      _, cmd = timer.update(msg)
+      cmd = timer.update(msg)
       expect(cmd).to be_nil
       expect(timer.remaining).to eq(10.0)
     end
@@ -162,7 +161,7 @@ RSpec.describe Petals::Timer do
       allow_any_instance_of(Object).to receive(:sleep)
       msg = timer.start_cmd.call
       timer.stop # bumps tag
-      _, cmd = timer.update(msg)
+      cmd = timer.update(msg)
       expect(cmd).to be_nil
       expect(timer.remaining).to eq(10.0)
     end
@@ -171,7 +170,7 @@ RSpec.describe Petals::Timer do
       timer = described_class.new(timeout: 10)
       timer.start_cmd
       msg = Petals::TimerTimeoutMsg.new(id: timer.id, time: Time.now)
-      _, cmd = timer.update(msg)
+      cmd = timer.update(msg)
       expect(cmd).to be_nil
       expect(timer.remaining).to eq(10.0)
     end
@@ -190,7 +189,7 @@ RSpec.describe Petals::Timer do
       allow_any_instance_of(Object).to receive(:sleep)
       msg = timer.start_cmd.call
       timer.stop
-      _, cmd = timer.update(msg)
+      cmd = timer.update(msg)
       expect(cmd).to be_nil
     end
 
@@ -240,7 +239,7 @@ RSpec.describe Petals::Timer do
       allow_any_instance_of(Object).to receive(:sleep)
       msg = timer.start_cmd.call
       timer.reset
-      _, cmd = timer.update(msg)
+      cmd = timer.update(msg)
       expect(cmd).to be_nil
     end
 
@@ -309,7 +308,7 @@ RSpec.describe Petals::Timer do
       expect(msg).to be_a(Petals::TimerTickMsg)
 
       # Tick 1: 3 -> 2, still running
-      _, cmd = timer.update(msg)
+      cmd = timer.update(msg)
       expect(timer.remaining).to eq(2.0)
       expect(timer.running?).to be true
       expect(timer.timed_out?).to be false
@@ -318,7 +317,7 @@ RSpec.describe Petals::Timer do
       # Tick 2: 2 -> 1, still running
       msg2 = cmd.call
       expect(msg2).to be_a(Petals::TimerTickMsg)
-      _, cmd2 = timer.update(msg2)
+      cmd2 = timer.update(msg2)
       expect(timer.remaining).to eq(1.0)
       expect(timer.running?).to be true
       expect(cmd2).to respond_to(:call)
@@ -326,7 +325,7 @@ RSpec.describe Petals::Timer do
       # Tick 3: 1 -> 0, timer stops, returns timeout_cmd
       msg3 = cmd2.call
       expect(msg3).to be_a(Petals::TimerTickMsg)
-      _, cmd3 = timer.update(msg3)
+      cmd3 = timer.update(msg3)
       expect(timer.remaining).to eq(0.0)
       expect(timer.running?).to be false
       expect(timer.timed_out?).to be true
@@ -338,7 +337,7 @@ RSpec.describe Petals::Timer do
       expect(timeout_msg.id).to eq(timer.id)
 
       # TimerTimeoutMsg is ignored by update (informational for parent)
-      _, cmd4 = timer.update(timeout_msg)
+      cmd4 = timer.update(timeout_msg)
       expect(cmd4).to be_nil
     end
   end
@@ -361,7 +360,7 @@ RSpec.describe Petals::Timer do
       expect(msg).to be_a(Petals::TimerTickMsg)
 
       # update clamps remaining to 0 and returns timeout_cmd
-      _, cmd = timer.update(msg)
+      cmd = timer.update(msg)
       expect(timer.remaining).to eq(0.0)
       expect(timer.timed_out?).to be true
       expect(cmd.call).to be_a(Petals::TimerTimeoutMsg)
@@ -372,7 +371,7 @@ RSpec.describe Petals::Timer do
       allow_any_instance_of(Object).to receive(:sleep)
 
       msg = timer.start_cmd.call
-      _, cmd = timer.update(msg)
+      cmd = timer.update(msg)
       expect(timer.remaining).to eq(0.0)
       expect(timer.timed_out?).to be true
       expect(timer.running?).to be false
@@ -391,7 +390,7 @@ RSpec.describe Petals::Timer do
       timer = described_class.new(timeout: 10)
       timer.start_cmd
       msg = Petals::TimerTickMsg.new(id: timer.id, tag: 999, time: Time.now)
-      _, cmd = timer.update(msg)
+      cmd = timer.update(msg)
       expect(cmd).to be_nil
     end
   end
@@ -405,11 +404,11 @@ RSpec.describe Petals::Timer do
       msg1 = t1.start_cmd.call
       msg2 = t2.start_cmd.call
 
-      _, cmd = t1.update(msg2)
+      cmd = t1.update(msg2)
       expect(cmd).to be_nil
       expect(t1.remaining).to eq(10.0)
 
-      _, cmd = t1.update(msg1)
+      cmd = t1.update(msg1)
       expect(cmd).to respond_to(:call)
       expect(t1.remaining).to eq(9.0)
     end

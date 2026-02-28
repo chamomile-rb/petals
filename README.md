@@ -42,12 +42,11 @@ class MyApp
   def update(msg)
     case msg
     when Chamomile::KeyMsg
-      return [self, quit] if msg.key == "q"
+      return quit if msg.key == "q"
     when Petals::SpinnerTickMsg
-      _, cmd = @spinner.update(msg)
-      return [self, cmd]
+      return @spinner.update(msg)
     end
-    [self, nil]
+    nil
   end
 
   def view
@@ -67,7 +66,7 @@ end
 @input.focus
 
 # In update:
-_, cmd = @input.update(msg)
+@input.update(msg)
 
 # In view:
 @input.view  # "> Hello world" with reverse-video cursor
@@ -81,7 +80,7 @@ _, cmd = @input.update(msg)
 cmd = @timer.start_cmd
 
 # In update — receives TimerTickMsg, returns TimerTimeoutMsg when done
-_, cmd = @timer.update(msg)
+cmd = @timer.update(msg)
 @timer.timed_out?  # true when countdown reaches 0
 
 # Count-up stopwatch
@@ -122,14 +121,14 @@ All components follow the Elm Architecture pattern:
 # Initialize
 component = Component.new(options...)
 
-# Update — returns [self, cmd]
-_, cmd = component.update(msg)
+# Update — returns a command or nil
+cmd = component.update(msg)
 
 # Render — returns a String
 component.view
 ```
 
-Components are mutable classes — `update` modifies internal state and returns `self`, so no model reassignment is needed.
+Components are mutable classes — `update` modifies internal state and returns a command (or nil), so no model reassignment is needed.
 
 ## Key Binding
 

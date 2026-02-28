@@ -27,30 +27,28 @@ class TimerStopwatchDemo
     when Chamomile::KeyMsg
       case msg.key
       when "q"
-        return [self, Chamomile::Commands.quit]
+        return Chamomile::Commands.quit
       when " "
         timer_cmd = @timer.toggle
         sw_cmd = @stopwatch.toggle
         cmds = [timer_cmd, sw_cmd].compact
-        return [self, cmds.empty? ? nil : Chamomile::Commands.batch(*cmds)]
+        return cmds.empty? ? nil : Chamomile::Commands.batch(*cmds)
       when "r"
         @timer.reset
         @stopwatch.reset
         @timed_out = false
-        return [self, Chamomile::Commands.batch(@timer.start_cmd, @stopwatch.start_cmd)]
+        return Chamomile::Commands.batch(@timer.start_cmd, @stopwatch.start_cmd)
       end
     when Petals::TimerTickMsg
-      _, cmd = @timer.update(msg)
-      return [self, cmd]
+      return @timer.update(msg)
     when Petals::TimerTimeoutMsg
       @timed_out = true
-      return [self, nil]
+      return nil
     when Petals::StopwatchTickMsg
-      _, cmd = @stopwatch.update(msg)
-      return [self, cmd]
+      return @stopwatch.update(msg)
     end
 
-    [self, nil]
+    nil
   end
 
   def view

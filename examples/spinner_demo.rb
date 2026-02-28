@@ -21,20 +21,19 @@ class SpinnerDemo
     case msg
     when Chamomile::KeyMsg
       case msg.key
-      when "q" then return [self, quit]
+      when "q" then return quit
       when :up, "k"
         @type_index = (@type_index - 1) % TYPES.size
         @spinner.spinner_type = current_type
-        return [self, @spinner.tick_cmd]
+        return @spinner.tick_cmd
       when :down, "j"
         @type_index = (@type_index + 1) % TYPES.size
         @spinner.spinner_type = current_type
-        return [self, @spinner.tick_cmd]
+        return @spinner.tick_cmd
       end
     end
 
-    _, cmd = @spinner.update(msg)
-    [self, cmd]
+    @spinner.update(msg)
   end
 
   def view

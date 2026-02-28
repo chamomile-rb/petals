@@ -22,7 +22,7 @@ class TextInputDemo
     if @submitted
       case msg
       when Chamomile::KeyMsg
-        return [self, quit] if msg.key == "q"
+        return quit if msg.key == "q"
 
         if msg.key == :enter
           @submitted = nil
@@ -30,22 +30,22 @@ class TextInputDemo
           @input.focus
         end
       end
-      return [self, nil]
+      return nil
     end
 
     case msg
     when Chamomile::KeyMsg
-      return [self, quit] if msg.key == :escape
+      return quit if msg.key == :escape
 
       if msg.key == :enter
         @submitted = @input.value
         @input.blur
-        return [self, nil]
+        return nil
       end
     end
 
     @input.update(msg)
-    [self, nil]
+    nil
   end
 
   def view

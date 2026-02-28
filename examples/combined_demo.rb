@@ -22,18 +22,18 @@ class CombinedDemo
   def update(msg)
     case msg
     when Chamomile::KeyMsg
-      return [self, quit] if msg.key == :escape
+      return quit if msg.key == :escape
 
       if msg.key == :enter && !@input.value.empty?
         @messages << @input.value
         @input.value = ""
-        return [self, nil]
+        return nil
       end
     end
 
-    _, spin_cmd = @spinner.update(msg)
+    spin_cmd = @spinner.update(msg)
     @input.update(msg)
-    [self, spin_cmd]
+    spin_cmd
   end
 
   def view

@@ -68,7 +68,7 @@ module Petals
     # Elm protocol
 
     def update(msg)
-      return [self, nil] unless @focused
+      return unless @focused
 
       case msg
       when Chamomile::KeyMsg
@@ -77,7 +77,7 @@ module Petals
         handle_paste(msg)
       end
 
-      [self, nil]
+      nil
     end
 
     def view

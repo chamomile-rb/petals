@@ -41,14 +41,14 @@ module Petals
       }
     end
 
-    # Advance frame if msg is a matching SpinnerTickMsg; return [self, cmd].
+    # Advance frame if msg is a matching SpinnerTickMsg; return cmd or nil.
     def update(msg)
-      return [self, nil] unless msg.is_a?(SpinnerTickMsg)
-      return [self, nil] unless msg.id == @id && msg.tag == @tag
+      return unless msg.is_a?(SpinnerTickMsg)
+      return unless msg.id == @id && msg.tag == @tag
 
       @frame = (@frame + 1) % @spinner_type.frames.size
       @tag += 1
-      [self, tick_cmd]
+      tick_cmd
     end
 
     # Current frame string.

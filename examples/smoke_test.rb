@@ -31,7 +31,7 @@ def run_model(model, messages, label:)
   puts "---"
 
   messages.each_with_index do |(msg, desc), _i|
-    _, cmd = model.update(msg)
+    cmd = model.update(msg)
     puts "After #{desc}: cmd=#{cmd ? "present" : "nil"}"
     puts model.view
     puts "---"

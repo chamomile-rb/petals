@@ -233,10 +233,9 @@ RSpec.describe Petals::Paginator do
       expect(p.page).to eq(0)
     end
 
-    it "returns [self, nil]" do
+    it "returns nil" do
       p = described_class.new(total_pages: 3)
-      result, cmd = p.update(key(:right))
-      expect(result).to equal(p)
+      cmd = p.update(key(:right))
       expect(cmd).to be_nil
     end
 

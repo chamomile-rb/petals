@@ -82,7 +82,7 @@ module Petals
         end
       end
 
-      [self, nil]
+      nil
     end
 
     def view

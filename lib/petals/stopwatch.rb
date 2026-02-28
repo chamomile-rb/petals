@@ -65,12 +65,12 @@ module Petals
     end
 
     def update(msg)
-      return [self, nil] unless msg.is_a?(StopwatchTickMsg)
-      return [self, nil] unless msg.id == @id && msg.tag == @tag
+      return unless msg.is_a?(StopwatchTickMsg)
+      return unless msg.id == @id && msg.tag == @tag
 
       @elapsed += @interval
       @tag += 1
-      [self, tick_cmd]
+      tick_cmd
     end
 
     def view

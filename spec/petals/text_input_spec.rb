@@ -471,15 +471,13 @@ RSpec.describe Petals::TextInput do
   end
 
   describe "#update return value" do
-    it "returns [self, nil]" do
-      result, cmd = input.update(key("a"))
-      expect(result).to equal(input)
+    it "returns nil" do
+      cmd = input.update(key("a"))
       expect(cmd).to be_nil
     end
 
     it "ignores unrelated message types" do
-      result, cmd = input.update(Chamomile::WindowSizeMsg.new(width: 80, height: 24))
-      expect(result).to equal(input)
+      cmd = input.update(Chamomile::WindowSizeMsg.new(width: 80, height: 24))
       expect(cmd).to be_nil
       expect(input.value).to eq("")
     end

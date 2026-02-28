@@ -73,19 +73,17 @@ module Petals
     def update(msg)
       case msg
       when TimerTickMsg
-        return [self, nil] unless msg.id == @id && msg.tag == @tag
+        return unless msg.id == @id && msg.tag == @tag
 
         @remaining = [(@remaining - @interval), 0.0].max
         @tag += 1
 
         if @remaining <= 0
           @running = false
-          [self, timeout_cmd]
+          timeout_cmd
         else
-          [self, tick_cmd]
+          tick_cmd
         end
-      else
-        [self, nil]
       end
     end
 

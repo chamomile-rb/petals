@@ -56,8 +56,7 @@ RSpec.describe Petals::Stopwatch do
       sw = described_class.new(interval: 1.0)
       allow_any_instance_of(Object).to receive(:sleep)
       msg = sw.start_cmd.call
-      result, cmd = sw.update(msg)
-      expect(result).to equal(sw)
+      cmd = sw.update(msg)
       expect(sw.elapsed).to eq(1.0)
       expect(cmd).to respond_to(:call)
     end
@@ -67,18 +66,18 @@ RSpec.describe Petals::Stopwatch do
       allow_any_instance_of(Object).to receive(:sleep)
 
       msg = sw.start_cmd.call
-      _, cmd = sw.update(msg)
+      cmd = sw.update(msg)
       expect(cmd).to respond_to(:call)
 
       msg2 = cmd.call
-      _, cmd2 = sw.update(msg2)
+      cmd2 = sw.update(msg2)
       expect(sw.elapsed).to eq(1.0)
       expect(cmd2).to respond_to(:call)
     end
 
     it "ignores non-StopwatchTickMsg" do
       sw = described_class.new
-      _, cmd = sw.update(Chamomile::KeyMsg.new(key: "a", mod: []))
+      cmd = sw.update(Chamomile::KeyMsg.new(key: "a", mod: []))
       expect(cmd).to be_nil
       expect(sw.elapsed).to eq(0.0)
     end
@@ -86,7 +85,7 @@ RSpec.describe Petals::Stopwatch do
     it "ignores StopwatchTickMsg with wrong id" do
       sw = described_class.new
       msg = Petals::StopwatchTickMsg.new(id: "wrong", tag: 0, time: Time.now)
-      _, cmd = sw.update(msg)
+      cmd = sw.update(msg)
       expect(cmd).to be_nil
       expect(sw.elapsed).to eq(0.0)
     end
@@ -96,7 +95,7 @@ RSpec.describe Petals::Stopwatch do
       allow_any_instance_of(Object).to receive(:sleep)
       msg = sw.start_cmd.call
       sw.stop # bumps tag
-      _, cmd = sw.update(msg)
+      cmd = sw.update(msg)
       expect(cmd).to be_nil
       expect(sw.elapsed).to eq(0.0)
     end
@@ -115,7 +114,7 @@ RSpec.describe Petals::Stopwatch do
       allow_any_instance_of(Object).to receive(:sleep)
       msg = sw.start_cmd.call
       sw.stop
-      _, cmd = sw.update(msg)
+      cmd = sw.update(msg)
       expect(cmd).to be_nil
     end
 
@@ -164,7 +163,7 @@ RSpec.describe Petals::Stopwatch do
       allow_any_instance_of(Object).to receive(:sleep)
       msg = sw.start_cmd.call
       sw.reset
-      _, cmd = sw.update(msg)
+      cmd = sw.update(msg)
       expect(cmd).to be_nil
     end
 
@@ -248,7 +247,7 @@ RSpec.describe Petals::Stopwatch do
 
       cmd = sw.toggle # start again
       msg = cmd.call
-      _, next_cmd = sw.update(msg)
+      next_cmd = sw.update(msg)
       expect(sw.elapsed).to eq(2.0)
       expect(next_cmd).to respond_to(:call)
     end
@@ -256,7 +255,7 @@ RSpec.describe Petals::Stopwatch do
     it "ignores StopwatchTickMsg with future tag" do
       sw = described_class.new
       msg = Petals::StopwatchTickMsg.new(id: sw.id, tag: 999, time: Time.now)
-      _, cmd = sw.update(msg)
+      cmd = sw.update(msg)
       expect(cmd).to be_nil
     end
 
@@ -285,11 +284,11 @@ RSpec.describe Petals::Stopwatch do
       msg1 = sw1.start_cmd.call
       msg2 = sw2.start_cmd.call
 
-      _, cmd = sw1.update(msg2)
+      cmd = sw1.update(msg2)
       expect(cmd).to be_nil
       expect(sw1.elapsed).to eq(0.0)
 
-      _, cmd = sw1.update(msg1)
+      cmd = sw1.update(msg1)
       expect(cmd).to respond_to(:call)
       expect(sw1.elapsed).to eq(1.0)
     end
