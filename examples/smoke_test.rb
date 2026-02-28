@@ -185,4 +185,234 @@ puts "After reset:"
 puts ts_demo.view
 puts
 
+# ---- Cursor ----
+puts "=== Cursor ==="
+cursor = Petals::Cursor.new
+puts "Initial view: #{cursor.view.inspect}"
+cmd = cursor.focus
+puts "Focused, cmd: #{cmd ? "present" : "nil"}"
+if cmd
+  tag = cursor.instance_variable_get(:@tag)
+  blink_msg = Petals::CursorBlinkMsg.new(id: cursor.id, tag: tag)
+  cmd2 = cursor.update(blink_msg)
+  puts "After blink: blinked=#{cursor.blinked}, view=#{cursor.view.inspect}"
+  puts "Chain cmd: #{cmd2 ? "present" : "nil"}"
+end
+cursor.mode = Petals::Cursor::MODE_STATIC
+puts "Static mode view: #{cursor.view.inspect}"
+cursor.mode = Petals::Cursor::MODE_HIDE
+puts "Hide mode view: #{cursor.view.inspect}"
+cursor.blur
+puts "After blur: focused=#{cursor.focused?}"
+puts
+
+# ---- Help ----
+puts "=== Help ==="
+help = Petals::Help.new(width: 40)
+bindings = [
+  { key: "q", desc: "quit" },
+  { key: "?", desc: "help" },
+  { key: "j/k", desc: "up/down" },
+]
+puts "Short: #{help.short_help_view(bindings)}"
+help.show_all = true
+puts "Full:"
+puts help.full_help_view([bindings])
+puts
+
+# ---- Progress ----
+puts "=== Progress ==="
+bar = Petals::Progress.new(width: 20, show_percentage: true)
+puts "Initial: #{bar.view}"
+bar.set_percent(0.5)
+puts "After set_percent(0.5), animating: #{bar.animating?}"
+puts "view_as(0.75): #{bar.view_as(0.75)}"
+puts "view_as(0.0): #{bar.view_as(0.0)}"
+puts "view_as(1.0): #{bar.view_as(1.0)}"
+# New: spring options
+bar2 = Petals::Progress.new(width: 20, frequency: 20.0, damping: 3.0)
+puts "Custom spring: freq=#{bar2.frequency} damp=#{bar2.damping}"
+bar2.set_spring_options(30.0, 2.0)
+puts "After set_spring_options: freq=#{bar2.frequency} damp=#{bar2.damping}"
+puts
+
+# ---- Viewport ----
+puts "=== Viewport ==="
+vp = Petals::Viewport.new(width: 40, height: 5)
+content = (0..19).map { |i| "Line #{i}: content here that is wide enough to scroll horizontally" }.join("\n")
+vp.set_content(content)
+puts "Initial (at_top=#{vp.at_top?}):"
+puts vp.view
+puts "---"
+vp.update(key("j"))
+vp.update(key("j"))
+puts "After 2x down:"
+puts vp.view
+puts "---"
+vp.update(key("G", mod: [:shift]))
+puts "After goto_bottom (at_bottom=#{vp.at_bottom?}):"
+puts vp.view
+puts "---"
+vp.update(key("g"))
+puts "After goto_top (at_top=#{vp.at_top?}):"
+puts vp.view
+# New: horizontal scroll
+vp.scroll_right(5)
+puts "After scroll_right(5), x_offset=#{vp.x_offset}:"
+puts vp.view
+vp.scroll_left(5)
+# New: soft wrap
+vp2 = Petals::Viewport.new(width: 20, height: 5)
+vp2.soft_wrap = true
+vp2.set_content("This is a long line that should wrap at twenty characters.")
+puts "Soft wrap view:"
+puts vp2.view
+# New: ensure_visible
+vp.ensure_visible(10)
+puts "After ensure_visible(10), y_offset=#{vp.y_offset}"
+# New: dimension setters
+vp.set_width(60)
+vp.set_height(8)
+puts "After set_width(60)/set_height(8): w=#{vp.width} h=#{vp.height}"
+puts
+
+# ---- Table ----
+puts "=== Table ==="
+cols = [
+  Petals::Table::Column.new(title: "Name", width: 12),
+  Petals::Table::Column.new(title: "Score", width: 6),
+]
+tbl_rows = [
+  %w[Alice 95],
+  %w[Bob 88],
+  %w[Charlie 72],
+  %w[Diana 91],
+  %w[Eve 85],
+]
+tbl = Petals::Table.new(columns: cols, rows: tbl_rows, height: 3).focus
+puts "Initial:"
+puts tbl.view
+puts "---"
+tbl.update(key("j"))
+tbl.update(key("j"))
+puts "After 2x down (cursor=#{tbl.cursor}):"
+puts tbl.view
+puts "---"
+puts "Selected: #{tbl.selected_row.inspect}"
+puts
+
+# ---- TextArea ----
+puts "=== TextArea ==="
+ta = Petals::TextArea.new(width: 30, height: 4, show_line_numbers: true).focus
+ta.update(key("H"))
+ta.update(key("e"))
+ta.update(key("l"))
+ta.update(key("l"))
+ta.update(key("o"))
+ta.update(key(:enter))
+ta.update(key("W"))
+ta.update(key("o"))
+ta.update(key("r"))
+ta.update(key("l"))
+ta.update(key("d"))
+puts "After typing 'Hello\\nWorld':"
+puts ta.view
+puts "---"
+puts "Value: #{ta.value.inspect}"
+puts "Line count: #{ta.line_count}, row=#{ta.row}, col=#{ta.col}"
+# New: move_to_begin / move_to_end
+ta.move_to_begin
+puts "After move_to_begin: row=#{ta.row} col=#{ta.col}"
+ta.move_to_end
+puts "After move_to_end: row=#{ta.row} col=#{ta.col}"
+# New: word extraction
+ta.value = "hello world foo"
+ta.instance_variable_set(:@col, 7)
+ta.instance_variable_set(:@last_char_offset, 7)
+puts "Word at col 7: #{ta.word.inspect}"
+# New: display_height
+ta.max_height = 10
+ta.value = (0..7).map { |i| "ln#{i}" }.join("\n")
+puts "display_height (max_height=10, lines=8, height=4): #{ta.display_height}"
+puts
+
+# ---- List ----
+puts "=== List ==="
+list_items = %w[Apple Banana Cherry Date Elderberry Fig Grape]
+lst = Petals::List.new(items: list_items, width: 30, height: 15)
+lst.title = "Fruits"
+puts "Initial:"
+puts lst.view
+puts "---"
+lst.update(key("j"))
+lst.update(key("j"))
+puts "After 2x down (cursor=#{lst.cursor}):"
+puts lst.view
+puts "---"
+lst.update(key("/"))
+lst.update(key("a"))
+puts "After filter 'a':"
+puts lst.view
+puts "---"
+lst.update(key(:enter))
+puts "After accept filter:"
+puts lst.view
+puts "---"
+lst.update(key(:escape))
+puts "After clear filter (items=#{lst.items.length}):"
+puts lst.view
+# New: infinite scroll
+lst.infinite_scroll = true
+lst.goto_end
+lst.cursor_down
+puts "After infinite_scroll wrap: cursor=#{lst.cursor}"
+# New: set_filter_text
+lst.set_filter_text("ban")
+puts "After set_filter_text('ban'): state=#{lst.filter_state}, items=#{lst.items.length}"
+lst.set_filter_text("")
+# New: global_index
+lst.cursor_down
+puts "global_index at cursor #{lst.cursor}: #{lst.global_index}"
+# New: visible_items
+puts "visible_items count: #{lst.visible_items.length}"
+# New: status message
+lst.new_status_message("Loading...", lifetime: 0.01)
+puts "Status: #{lst.status_message.inspect}"
+puts "Status in view: #{lst.view.include?("Loading...")}"
+# New: spinner control
+lst.start_spinner
+puts "Spinner visible: #{lst.spinner_visible?}"
+lst.stop_spinner
+puts "Spinner visible after stop: #{lst.spinner_visible?}"
+puts
+
+# ---- FilePicker ----
+puts "=== FilePicker ==="
+fp = Petals::FilePicker.new(directory: Dir.pwd, height: 5)
+init_msg = fp.init_cmd.call
+fp.update(init_msg)
+puts "Directory: #{fp.current_directory}"
+puts "View:"
+puts fp.view
+puts "---"
+fp.update(key(:down))
+puts "After down (highlighted: #{fp.highlighted_path})"
+# New: page nav
+fp.update(key(:page_down))
+puts "After page_down (highlighted: #{fp.highlighted_path})"
+fp.update(key("g"))
+puts "After goto_top (highlighted: #{fp.highlighted_path})"
+fp.update(key("G", mod: [:shift]))
+puts "After goto_bottom (highlighted: #{fp.highlighted_path})"
+# New: disabled selection
+fp2 = Petals::FilePicker.new(directory: Dir.pwd, height: 5, allowed_types: [".xyz_nonexistent"])
+init_msg2 = fp2.init_cmd.call
+fp2.update(init_msg2)
+# Navigate to a file (skip dirs)
+10.times { fp2.update(key(:down)) }
+fp2.update(key(:enter))
+sel, path = fp2.did_select_disabled_file?(key(:enter))
+puts "Disabled file selected: #{sel}, path: #{path&.split("/")&.last}"
+puts
+
 puts "All smoke tests passed!"

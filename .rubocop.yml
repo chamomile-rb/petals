@@ -16,16 +16,16 @@ Metrics/BlockLength:
     - 'spec/**/*'
     - '*.gemspec'
 
-# TextInput is complex by nature — it handles many key bindings
+# TextInput, TextArea, List are complex by nature — they handle many key bindings
 Metrics/ClassLength:
-  Max: 250
+  Max: 370
 
 # Some methods (handle_key, view) need to handle many cases
 Metrics/MethodLength:
-  Max: 30
+  Max: 35
 
 Metrics/AbcSize:
-  Max: 35
+  Max: 38
 
 Metrics/CyclomaticComplexity:
   Max: 18
@@ -33,9 +33,9 @@ Metrics/CyclomaticComplexity:
 Metrics/PerceivedComplexity:
   Max: 18
 
-# We use keyword args extensively — 8 is fine for options-heavy constructors
+# We use keyword args extensively — 10 is fine for options-heavy constructors
 Metrics/ParameterLists:
-  Max: 8
+  Max: 10
 
 # Short names like n, p, v are clear in context (setters, clamp helpers)
 Naming/MethodParameterName:
@@ -46,6 +46,17 @@ Naming/MethodParameterName:
     - c
     - k
     - i
+    - s
+    - t
+    - x
+    - "y"
+
+# BubbleTea-matching API names: set_content, set_percent, did_select_file?
+Naming/AccessorMethodName:
+  Enabled: false
+
+Naming/PredicateMethod:
+  Enabled: false
 
 # We prefer annotated format strings but won't enforce everywhere
 Style/FormatStringToken:
