@@ -72,3 +72,7 @@ Style/TrailingCommaInArrayLiteral:
 
 Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: consistent_comma
+
+# Dev deps in gemspec is fine for a single-gemspec project
+Gemspec/DevelopmentDependencies:
+  Enabled: false
