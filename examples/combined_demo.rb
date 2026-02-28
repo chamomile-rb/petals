@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require_relative "../lib/chamomile/leaves"
+require_relative "../lib/petals"
 
 class CombinedDemo
   include Chamomile::Model
   include Chamomile::Commands
 
   def initialize
-    @spinner = Chamomile::Leaves::Spinner.new(type: Chamomile::Leaves::Spinners::DOT)
-    @input = Chamomile::Leaves::TextInput.new(
+    @spinner = Petals::Spinner.new(type: Petals::Spinners::DOT)
+    @input = Petals::TextInput.new(
       prompt: "> ",
       placeholder: "What are you waiting for?"
     ).focus
@@ -42,7 +42,7 @@ class CombinedDemo
 
     <<~VIEW
 
-      #{@spinner.view}  Chamomile Leaves Demo
+      #{@spinner.view}  Petals Demo
 
       Messages:
       #{history}

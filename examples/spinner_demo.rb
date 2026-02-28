@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../lib/chamomile/leaves"
+require_relative "../lib/petals"
 
 class SpinnerDemo
   include Chamomile::Model
@@ -10,7 +10,7 @@ class SpinnerDemo
 
   def initialize
     @type_index = 0
-    @spinner = Chamomile::Leaves::Spinner.new(type: current_type)
+    @spinner = Petals::Spinner.new(type: current_type)
   end
 
   def init
@@ -52,7 +52,7 @@ class SpinnerDemo
   private
 
   def current_type
-    Chamomile::Leaves::Spinners.const_get(TYPES[@type_index])
+    Petals::Spinners.const_get(TYPES[@type_index])
   end
 end
 

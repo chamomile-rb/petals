@@ -3,7 +3,7 @@
 
 # Headless smoke test — exercises each example's model without a terminal.
 
-require_relative "../lib/chamomile/leaves"
+require_relative "../lib/petals"
 
 def key(k, mod: []) = Chamomile::KeyMsg.new(key: k, mod: mod)
 def paste(text) = Chamomile::PasteMsg.new(content: text)
@@ -46,7 +46,7 @@ spinner_demo = SpinnerDemo.new
 
 # Simulate: render initial, send SpinnerTickMsg to advance, press down to change type
 spinner = spinner_demo.instance_variable_get(:@spinner)
-tick_msg = Chamomile::Leaves::SpinnerTickMsg.new(id: spinner.id, tag: 0, time: Time.now)
+tick_msg = Petals::SpinnerTickMsg.new(id: spinner.id, tag: 0, time: Time.now)
 
 run_model(spinner_demo, [
             [tick_msg, "spinner tick"],
@@ -76,7 +76,7 @@ require_relative "combined_demo"
 
 combined = CombinedDemo.new
 combined_spinner = combined.instance_variable_get(:@spinner)
-combined_tick = Chamomile::Leaves::SpinnerTickMsg.new(
+combined_tick = Petals::SpinnerTickMsg.new(
   id: combined_spinner.id, tag: 0, time: Time.now
 )
 
@@ -94,12 +94,12 @@ run_model(combined, [
 
 # ---- Stopwatch ----
 puts "=== Stopwatch ==="
-sw = Chamomile::Leaves::Stopwatch.new(interval: 1.0)
+sw = Petals::Stopwatch.new(interval: 1.0)
 puts "Initial view: #{sw.view}"
 sw.start_cmd
 puts "Running: #{sw.running?}"
 # Simulate a tick
-tick_msg = Chamomile::Leaves::StopwatchTickMsg.new(id: sw.id, tag: sw.instance_variable_get(:@tag), time: Time.now)
+tick_msg = Petals::StopwatchTickMsg.new(id: sw.id, tag: sw.instance_variable_get(:@tag), time: Time.now)
 sw.update(tick_msg)
 puts "After 1 tick: #{sw.view} (elapsed=#{sw.elapsed})"
 sw.stop
@@ -110,18 +110,18 @@ puts
 
 # ---- Timer ----
 puts "=== Timer ==="
-timer = Chamomile::Leaves::Timer.new(timeout: 5, interval: 1.0)
+timer = Petals::Timer.new(timeout: 5, interval: 1.0)
 puts "Initial view: #{timer.view}"
 timer.start_cmd
 puts "Running: #{timer.running?}"
 # Simulate ticks
 4.times do
-  tick_msg = Chamomile::Leaves::TimerTickMsg.new(id: timer.id, tag: timer.instance_variable_get(:@tag), time: Time.now)
+  tick_msg = Petals::TimerTickMsg.new(id: timer.id, tag: timer.instance_variable_get(:@tag), time: Time.now)
   timer.update(tick_msg)
   puts "Tick: #{timer.view} (remaining=#{timer.remaining})"
 end
 # Final tick should produce timeout
-tick_msg = Chamomile::Leaves::TimerTickMsg.new(id: timer.id, tag: timer.instance_variable_get(:@tag), time: Time.now)
+tick_msg = Petals::TimerTickMsg.new(id: timer.id, tag: timer.instance_variable_get(:@tag), time: Time.now)
 timer.update(tick_msg)
 puts "Timed out: #{timer.timed_out?}, view: #{timer.view}"
 timer.reset
@@ -130,7 +130,7 @@ puts
 
 # ---- Paginator ----
 puts "=== Paginator ==="
-pag = Chamomile::Leaves::Paginator.new(total_pages: 4, per_page: 5)
+pag = Petals::Paginator.new(total_pages: 4, per_page: 5)
 puts "Initial view: #{pag.view}"
 pag.next_page
 puts "After next: #{pag.view} (page=#{pag.page})"
@@ -138,7 +138,7 @@ pag.next_page
 puts "After next: #{pag.view} (page=#{pag.page})"
 pag.prev_page
 puts "After prev: #{pag.view} (page=#{pag.page})"
-pag.type = Chamomile::Leaves::Paginator::TYPE_ARABIC
+pag.type = Petals::Paginator::TYPE_ARABIC
 puts "Arabic view: #{pag.view}"
 pag.update(key(:right))
 puts "After right key: #{pag.view}"
@@ -162,7 +162,7 @@ puts ts_demo.view
 puts "---"
 
 # Simulate timer tick
-timer_tick = Chamomile::Leaves::TimerTickMsg.new(
+timer_tick = Petals::TimerTickMsg.new(
   id: ts_timer.id, tag: ts_timer.instance_variable_get(:@tag), time: Time.now
 )
 ts_demo.update(timer_tick)
@@ -171,7 +171,7 @@ puts ts_demo.view
 puts "---"
 
 # Simulate stopwatch tick
-sw_tick = Chamomile::Leaves::StopwatchTickMsg.new(
+sw_tick = Petals::StopwatchTickMsg.new(
   id: ts_sw.id, tag: ts_sw.instance_variable_get(:@tag), time: Time.now
 )
 ts_demo.update(sw_tick)

@@ -17,7 +17,7 @@ Reusable TUI components for the [Chamomile](https://github.com/chamomile) framew
 
 ```ruby
 # Gemfile
-gem "chamomile-leaves"
+gem "petals"
 ```
 
 ## Quick Start
@@ -25,14 +25,14 @@ gem "chamomile-leaves"
 ### Spinner
 
 ```ruby
-require "chamomile/leaves"
+require "petals"
 
 class MyApp
   include Chamomile::Model
   include Chamomile::Commands
 
   def initialize
-    @spinner = Chamomile::Leaves::Spinner.new(type: Chamomile::Leaves::Spinners::DOT)
+    @spinner = Petals::Spinner.new(type: Petals::Spinners::DOT)
   end
 
   def init
@@ -43,7 +43,7 @@ class MyApp
     case msg
     when Chamomile::KeyMsg
       return [self, quit] if msg.key == "q"
-    when Chamomile::Leaves::SpinnerTickMsg
+    when Petals::SpinnerTickMsg
       _, cmd = @spinner.update(msg)
       return [self, cmd]
     end
@@ -59,7 +59,7 @@ end
 ### TextInput
 
 ```ruby
-@input = Chamomile::Leaves::TextInput.new(
+@input = Petals::TextInput.new(
   prompt: "> ",
   placeholder: "Type something...",
   char_limit: 100,
@@ -77,7 +77,7 @@ _, cmd = @input.update(msg)
 
 ```ruby
 # Countdown from 30 seconds
-@timer = Chamomile::Leaves::Timer.new(timeout: 30, interval: 1.0)
+@timer = Petals::Timer.new(timeout: 30, interval: 1.0)
 cmd = @timer.start_cmd
 
 # In update — receives TimerTickMsg, returns TimerTimeoutMsg when done
@@ -85,7 +85,7 @@ _, cmd = @timer.update(msg)
 @timer.timed_out?  # true when countdown reaches 0
 
 # Count-up stopwatch
-@stopwatch = Chamomile::Leaves::Stopwatch.new(interval: 1.0)
+@stopwatch = Petals::Stopwatch.new(interval: 1.0)
 cmd = @stopwatch.start_cmd
 
 # Both render as "MM:SS"
@@ -96,7 +96,7 @@ cmd = @stopwatch.start_cmd
 ### Paginator
 
 ```ruby
-@pager = Chamomile::Leaves::Paginator.new(total_pages: 5)
+@pager = Petals::Paginator.new(total_pages: 5)
 
 # Navigate
 @pager.next_page
@@ -106,7 +106,7 @@ cmd = @stopwatch.start_cmd
 # Display
 @pager.view  # "○ ● ○ ○ ○" (dot mode)
 
-@pager.type = Chamomile::Leaves::Paginator::TYPE_ARABIC
+@pager.type = Petals::Paginator::TYPE_ARABIC
 @pager.view  # "2/5"
 
 # Slice arrays by page

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative "lib/chamomile/leaves/version"
+require_relative "lib/petals/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "chamomile-leaves"
-  spec.version       = Chamomile::Leaves::VERSION
+  spec.name          = "petals"
+  spec.version       = Petals::VERSION
   spec.authors       = ["Chamomile Contributors"]
   spec.summary       = "Reusable TUI components for the Chamomile framework"
   spec.description   = "Spinner, TextInput, and more — composable widgets for Chamomile TUI apps"

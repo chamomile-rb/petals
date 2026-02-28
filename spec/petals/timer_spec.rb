@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Chamomile::Leaves::Timer do
+RSpec.describe Petals::Timer do
   describe "initialization" do
     it "requires a timeout" do
       timer = described_class.new(timeout: 30)
@@ -52,7 +52,7 @@ RSpec.describe Chamomile::Leaves::Timer do
       timer = described_class.new(timeout: 10)
       allow_any_instance_of(Object).to receive(:sleep)
       msg = timer.start_cmd.call
-      expect(msg).to be_a(Chamomile::Leaves::TimerTickMsg)
+      expect(msg).to be_a(Petals::TimerTickMsg)
       expect(msg.id).to eq(timer.id)
     end
 
@@ -120,7 +120,7 @@ RSpec.describe Chamomile::Leaves::Timer do
 
       # The timeout_cmd produces TimerTimeoutMsg (no sleep)
       timeout_msg = cmd2.call
-      expect(timeout_msg).to be_a(Chamomile::Leaves::TimerTimeoutMsg)
+      expect(timeout_msg).to be_a(Petals::TimerTimeoutMsg)
       expect(timeout_msg.id).to eq(timer.id)
     end
 
@@ -130,7 +130,7 @@ RSpec.describe Chamomile::Leaves::Timer do
 
       # start_cmd always produces TimerTickMsg now
       msg = timer.start_cmd.call
-      expect(msg).to be_a(Chamomile::Leaves::TimerTickMsg)
+      expect(msg).to be_a(Petals::TimerTickMsg)
 
       _, cmd = timer.update(msg)
       expect(timer.remaining).to eq(0.0)
@@ -138,7 +138,7 @@ RSpec.describe Chamomile::Leaves::Timer do
       expect(timer.running?).to be false
       # Returns timeout_cmd
       expect(cmd).to respond_to(:call)
-      expect(cmd.call).to be_a(Chamomile::Leaves::TimerTimeoutMsg)
+      expect(cmd.call).to be_a(Petals::TimerTimeoutMsg)
     end
 
     it "ignores non-TimerTickMsg" do
@@ -151,7 +151,7 @@ RSpec.describe Chamomile::Leaves::Timer do
     it "ignores TimerTickMsg with wrong id" do
       timer = described_class.new(timeout: 10)
       timer.start_cmd
-      msg = Chamomile::Leaves::TimerTickMsg.new(id: "wrong", tag: 0, time: Time.now)
+      msg = Petals::TimerTickMsg.new(id: "wrong", tag: 0, time: Time.now)
       _, cmd = timer.update(msg)
       expect(cmd).to be_nil
       expect(timer.remaining).to eq(10.0)
@@ -170,7 +170,7 @@ RSpec.describe Chamomile::Leaves::Timer do
     it "ignores TimerTimeoutMsg (informational for parent)" do
       timer = described_class.new(timeout: 10)
       timer.start_cmd
-      msg = Chamomile::Leaves::TimerTimeoutMsg.new(id: timer.id, time: Time.now)
+      msg = Petals::TimerTimeoutMsg.new(id: timer.id, time: Time.now)
       _, cmd = timer.update(msg)
       expect(cmd).to be_nil
       expect(timer.remaining).to eq(10.0)
@@ -306,7 +306,7 @@ RSpec.describe Chamomile::Leaves::Timer do
 
       # Start: remaining=3
       msg = timer.start_cmd.call
-      expect(msg).to be_a(Chamomile::Leaves::TimerTickMsg)
+      expect(msg).to be_a(Petals::TimerTickMsg)
 
       # Tick 1: 3 -> 2, still running
       _, cmd = timer.update(msg)
@@ -317,7 +317,7 @@ RSpec.describe Chamomile::Leaves::Timer do
 
       # Tick 2: 2 -> 1, still running
       msg2 = cmd.call
-      expect(msg2).to be_a(Chamomile::Leaves::TimerTickMsg)
+      expect(msg2).to be_a(Petals::TimerTickMsg)
       _, cmd2 = timer.update(msg2)
       expect(timer.remaining).to eq(1.0)
       expect(timer.running?).to be true
@@ -325,7 +325,7 @@ RSpec.describe Chamomile::Leaves::Timer do
 
       # Tick 3: 1 -> 0, timer stops, returns timeout_cmd
       msg3 = cmd2.call
-      expect(msg3).to be_a(Chamomile::Leaves::TimerTickMsg)
+      expect(msg3).to be_a(Petals::TimerTickMsg)
       _, cmd3 = timer.update(msg3)
       expect(timer.remaining).to eq(0.0)
       expect(timer.running?).to be false
@@ -334,7 +334,7 @@ RSpec.describe Chamomile::Leaves::Timer do
 
       # timeout_cmd produces TimerTimeoutMsg (immediate, no sleep)
       timeout_msg = cmd3.call
-      expect(timeout_msg).to be_a(Chamomile::Leaves::TimerTimeoutMsg)
+      expect(timeout_msg).to be_a(Petals::TimerTimeoutMsg)
       expect(timeout_msg.id).to eq(timer.id)
 
       # TimerTimeoutMsg is ignored by update (informational for parent)
@@ -358,13 +358,13 @@ RSpec.describe Chamomile::Leaves::Timer do
 
       # start_cmd always produces TimerTickMsg
       msg = timer.start_cmd.call
-      expect(msg).to be_a(Chamomile::Leaves::TimerTickMsg)
+      expect(msg).to be_a(Petals::TimerTickMsg)
 
       # update clamps remaining to 0 and returns timeout_cmd
       _, cmd = timer.update(msg)
       expect(timer.remaining).to eq(0.0)
       expect(timer.timed_out?).to be true
-      expect(cmd.call).to be_a(Chamomile::Leaves::TimerTimeoutMsg)
+      expect(cmd.call).to be_a(Petals::TimerTimeoutMsg)
     end
 
     it "handles timeout equal to interval" do
@@ -377,7 +377,7 @@ RSpec.describe Chamomile::Leaves::Timer do
       expect(timer.timed_out?).to be true
       expect(timer.running?).to be false
       expect(cmd).to respond_to(:call)
-      expect(cmd.call).to be_a(Chamomile::Leaves::TimerTimeoutMsg)
+      expect(cmd.call).to be_a(Petals::TimerTimeoutMsg)
     end
 
     it "toggle returns nil when timed out" do
@@ -390,7 +390,7 @@ RSpec.describe Chamomile::Leaves::Timer do
     it "ignores TimerTickMsg with future tag" do
       timer = described_class.new(timeout: 10)
       timer.start_cmd
-      msg = Chamomile::Leaves::TimerTickMsg.new(id: timer.id, tag: 999, time: Time.now)
+      msg = Petals::TimerTickMsg.new(id: timer.id, tag: 999, time: Time.now)
       _, cmd = timer.update(msg)
       expect(cmd).to be_nil
     end

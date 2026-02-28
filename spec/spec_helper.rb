@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "chamomile/leaves"
+require "petals"
 
 RSpec.configure do |config|
   config.order = :random

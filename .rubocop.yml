@@ -47,11 +47,6 @@ Naming/MethodParameterName:
     - k
     - i
 
-# chamomile-leaves.rb is the conventional gem entry point name
-Naming/FileName:
-  Exclude:
-    - 'lib/chamomile-leaves.rb'
-
 # We prefer annotated format strings but won't enforce everywhere
 Style/FormatStringToken:
   Enabled: false

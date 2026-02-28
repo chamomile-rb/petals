@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Chamomile::Leaves::TextInput::DEFAULT_KEY_MAP do
+RSpec.describe Petals::TextInput::DEFAULT_KEY_MAP do
   subject(:key_map) { described_class }
 
   it "is frozen" do

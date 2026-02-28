@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require_relative "../lib/chamomile/leaves"
+require_relative "../lib/petals"
 
 class TextInputDemo
   include Chamomile::Model
   include Chamomile::Commands
 
   def initialize
-    @input = Chamomile::Leaves::TextInput.new(
+    @input = Petals::TextInput.new(
       prompt: "> ",
       placeholder: "Type something...",
       char_limit: 50,

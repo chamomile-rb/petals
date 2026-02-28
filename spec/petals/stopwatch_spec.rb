@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Chamomile::Leaves::Stopwatch do
+RSpec.describe Petals::Stopwatch do
   describe "initialization" do
     it "defaults to 1.0 second interval" do
       sw = described_class.new
@@ -46,7 +46,7 @@ RSpec.describe Chamomile::Leaves::Stopwatch do
       sw = described_class.new
       allow_any_instance_of(Object).to receive(:sleep)
       msg = sw.start_cmd.call
-      expect(msg).to be_a(Chamomile::Leaves::StopwatchTickMsg)
+      expect(msg).to be_a(Petals::StopwatchTickMsg)
       expect(msg.id).to eq(sw.id)
     end
   end
@@ -85,7 +85,7 @@ RSpec.describe Chamomile::Leaves::Stopwatch do
 
     it "ignores StopwatchTickMsg with wrong id" do
       sw = described_class.new
-      msg = Chamomile::Leaves::StopwatchTickMsg.new(id: "wrong", tag: 0, time: Time.now)
+      msg = Petals::StopwatchTickMsg.new(id: "wrong", tag: 0, time: Time.now)
       _, cmd = sw.update(msg)
       expect(cmd).to be_nil
       expect(sw.elapsed).to eq(0.0)
@@ -255,7 +255,7 @@ RSpec.describe Chamomile::Leaves::Stopwatch do
 
     it "ignores StopwatchTickMsg with future tag" do
       sw = described_class.new
-      msg = Chamomile::Leaves::StopwatchTickMsg.new(id: sw.id, tag: 999, time: Time.now)
+      msg = Petals::StopwatchTickMsg.new(id: sw.id, tag: 999, time: Time.now)
       _, cmd = sw.update(msg)
       expect(cmd).to be_nil
     end

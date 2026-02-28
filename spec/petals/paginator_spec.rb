@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Chamomile::Leaves::Paginator do
+RSpec.describe Petals::Paginator do
   def key(k, mod: []) = Chamomile::KeyMsg.new(key: k, mod: mod)
 
   describe "initialization" do

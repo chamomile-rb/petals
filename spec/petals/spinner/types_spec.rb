@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Chamomile::Leaves::SpinnerType do
+RSpec.describe Petals::SpinnerType do
   it "is a Data.define with frames and fps" do
     t = described_class.new(frames: %w[a b], fps: 5)
     expect(t.frames).to eq(%w[a b])
@@ -15,7 +15,7 @@ RSpec.describe Chamomile::Leaves::SpinnerType do
   end
 end
 
-RSpec.describe Chamomile::Leaves::Spinners do
+RSpec.describe Petals::Spinners do
   all_types = {
     LINE: { frame_count: 4, fps: 10 },
     DOT: { frame_count: 8, fps: 10 },
@@ -36,7 +36,7 @@ RSpec.describe Chamomile::Leaves::Spinners do
       let(:spinner_type) { described_class.const_get(name) }
 
       it "is a SpinnerType" do
-        expect(spinner_type).to be_a(Chamomile::Leaves::SpinnerType)
+        expect(spinner_type).to be_a(Petals::SpinnerType)
       end
 
       it "has #{expected[:frame_count]} frames" do
@@ -50,7 +50,7 @@ RSpec.describe Chamomile::Leaves::Spinners do
   end
 
   it "defines exactly 12 spinner types" do
-    types = described_class.constants.select { |c| described_class.const_get(c).is_a?(Chamomile::Leaves::SpinnerType) }
+    types = described_class.constants.select { |c| described_class.const_get(c).is_a?(Petals::SpinnerType) }
     expect(types.size).to eq(12)
   end
 end

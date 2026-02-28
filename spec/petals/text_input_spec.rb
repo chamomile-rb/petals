@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Chamomile::Leaves::TextInput do
+RSpec.describe Petals::TextInput do
   def key(k, mod: [])
     Chamomile::KeyMsg.new(key: k, mod: mod)
   end

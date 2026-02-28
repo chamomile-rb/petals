@@ -2,16 +2,16 @@
 
 require "spec_helper"
 
-RSpec.describe Chamomile::Leaves::Spinner do
+RSpec.describe Petals::Spinner do
   describe "initialization" do
     it "defaults to LINE spinner type" do
       spinner = described_class.new
-      expect(spinner.spinner_type).to eq(Chamomile::Leaves::Spinners::LINE)
+      expect(spinner.spinner_type).to eq(Petals::Spinners::LINE)
     end
 
     it "accepts a custom type" do
-      spinner = described_class.new(type: Chamomile::Leaves::Spinners::DOT)
-      expect(spinner.spinner_type).to eq(Chamomile::Leaves::Spinners::DOT)
+      spinner = described_class.new(type: Petals::Spinners::DOT)
+      expect(spinner.spinner_type).to eq(Petals::Spinners::DOT)
     end
 
     it "assigns unique IDs" do
@@ -27,7 +27,7 @@ RSpec.describe Chamomile::Leaves::Spinner do
 
   describe "#view" do
     it "returns the current frame" do
-      spinner = described_class.new(type: Chamomile::Leaves::Spinners::ELLIPSIS)
+      spinner = described_class.new(type: Petals::Spinners::ELLIPSIS)
       expect(spinner.view).to eq("")
     end
   end
@@ -43,7 +43,7 @@ RSpec.describe Chamomile::Leaves::Spinner do
       # Stub sleep to avoid waiting
       allow_any_instance_of(Object).to receive(:sleep)
       msg = spinner.tick_cmd.call
-      expect(msg).to be_a(Chamomile::Leaves::SpinnerTickMsg)
+      expect(msg).to be_a(Petals::SpinnerTickMsg)
       expect(msg.id).to eq(spinner.id)
     end
   end
@@ -81,7 +81,7 @@ RSpec.describe Chamomile::Leaves::Spinner do
 
     it "ignores SpinnerTickMsg with wrong id" do
       spinner = described_class.new
-      msg = Chamomile::Leaves::SpinnerTickMsg.new(id: -999, tag: 0, time: Time.now)
+      msg = Petals::SpinnerTickMsg.new(id: -999, tag: 0, time: Time.now)
       _, cmd = spinner.update(msg)
       expect(cmd).to be_nil
       expect(spinner.view).to eq("|")
@@ -127,8 +127,8 @@ RSpec.describe Chamomile::Leaves::Spinner do
   describe "#spinner_type=" do
     it "changes the spinner type" do
       spinner = described_class.new
-      spinner.spinner_type = Chamomile::Leaves::Spinners::DOT
-      expect(spinner.spinner_type).to eq(Chamomile::Leaves::Spinners::DOT)
+      spinner.spinner_type = Petals::Spinners::DOT
+      expect(spinner.spinner_type).to eq(Petals::Spinners::DOT)
       expect(spinner.view).to eq("⣾")
     end
 
@@ -137,7 +137,7 @@ RSpec.describe Chamomile::Leaves::Spinner do
       allow_any_instance_of(Object).to receive(:sleep)
       msg = spinner.tick_cmd.call
       spinner.update(msg)
-      spinner.spinner_type = Chamomile::Leaves::Spinners::DOT
+      spinner.spinner_type = Petals::Spinners::DOT
       expect(spinner.view).to eq("⣾")
     end
 
@@ -145,7 +145,7 @@ RSpec.describe Chamomile::Leaves::Spinner do
       spinner = described_class.new
       allow_any_instance_of(Object).to receive(:sleep)
       msg = spinner.tick_cmd.call
-      spinner.spinner_type = Chamomile::Leaves::Spinners::DOT
+      spinner.spinner_type = Petals::Spinners::DOT
       _, cmd = spinner.update(msg)
       expect(cmd).to be_nil
     end

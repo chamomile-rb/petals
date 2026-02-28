@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Chamomile::Leaves::KeyBinding do
+RSpec.describe Petals::KeyBinding do
   let(:key_map) do
     {
       move_left: [[:left, []], ["h", []], ["b", [:ctrl]]],
