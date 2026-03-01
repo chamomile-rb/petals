@@ -1,6 +1,6 @@
-# Chamomile Leaves
+# Petals
 
-Reusable TUI components for the [Chamomile](https://github.com/chamomile) framework. Ported from Go's [Bubbles](https://github.com/charmbracelet/bubbles).
+Reusable TUI components for the [Chamomile](https://github.com/chamomile-rb/chamomile) framework. Ported from Go's [Bubbles](https://github.com/charmbracelet/bubbles).
 
 ## Components
 
@@ -8,10 +8,17 @@ Reusable TUI components for the [Chamomile](https://github.com/chamomile) framew
 |-----------|-------------|
 | **Spinner** | 12 animation types (dots, lines, moon, etc.) with configurable FPS |
 | **TextInput** | Single-line input with cursor movement, word editing, echo modes, paste support |
+| **TextArea** | Multi-line editor with 2D cursor, line numbers, word ops, page navigation |
 | **Stopwatch** | Count-up timer with start/stop/toggle/reset |
 | **Timer** | Countdown timer with timeout notification |
 | **Paginator** | Page navigation with dot or arabic display and key bindings |
-| **KeyBinding** | Modifier-order-insensitive key matching for composable key maps |
+| **Cursor** | Blink/static/hide modes with focus/blur support |
+| **Help** | Short/full help view renderer from key binding definitions |
+| **Progress** | Spring-animated progress bar with gradient/color support |
+| **Viewport** | Scrollable content pane with keyboard and mouse navigation |
+| **FilePicker** | Async directory browser with extension filtering and stack history |
+| **Table** | Scrollable, focus-gated data table with column definitions |
+| **List** | Composable filterable list with fuzzy search, delegates, and status messages |
 
 ## Installation
 
@@ -92,6 +99,54 @@ cmd = @stopwatch.start_cmd
 @stopwatch.view  # "01:03"
 ```
 
+### Viewport
+
+```ruby
+@viewport = Petals::Viewport.new(width: 80, height: 20)
+@viewport.set_content(long_text)
+
+# In update — responds to j/k, pgup/pgdn, g/G, mouse wheel
+cmd = @viewport.update(msg)
+
+# In view:
+@viewport.view  # visible portion of content
+```
+
+### Table
+
+```ruby
+columns = [
+  Petals::Table::Column.new(title: "Name", width: 20),
+  Petals::Table::Column.new(title: "Size", width: 10),
+]
+rows = [["style.rb", "19.6 KB"], ["wrap.rb", "4.2 KB"]]
+
+@table = Petals::Table.new(columns: columns, rows: rows, height: 10)
+@table.focus
+
+# In update — responds to up/down/g/G
+cmd = @table.update(msg)
+
+# In view:
+@table.view  # formatted table with highlighted cursor row
+```
+
+### List
+
+```ruby
+items = ["Apple", "Banana", "Cherry", "Date", "Fig"]
+delegates = items.map { |i| Petals::List::DefaultItem.new(title: i) }
+
+@list = Petals::List.new(items: delegates, width: 30, height: 15)
+@list.title = "Fruits"
+
+# In update — responds to arrows, /, filter input
+cmd = @list.update(msg)
+
+# In view — rendered list with filter bar, pagination, help
+@list.view
+```
+
 ### Paginator
 
 ```ruby
@@ -135,13 +190,8 @@ Components are mutable classes — `update` modifies internal state and returns 
 Components use `KeyBinding` for configurable key maps:
 
 ```ruby
-# Default TextInput key map includes:
-# :character_forward  → right arrow, Ctrl+F
-# :character_backward → left arrow, Ctrl+B
-# :delete_char_backward → backspace
-# :line_start → Home, Ctrl+A
-# :line_end → End, Ctrl+E
-# ... and more
+# Check if a key message matches an action
+Petals::KeyBinding.key_matches?(msg, @key_map, :line_start)
 
 # Customize by passing your own key_map to any component
 ```
@@ -153,14 +203,23 @@ ruby examples/spinner_demo.rb          # animated spinner types
 ruby examples/text_input_demo.rb       # interactive text input
 ruby examples/combined_demo.rb         # spinner + text input together
 ruby examples/timer_stopwatch_demo.rb  # countdown + count-up side by side
+ruby examples/kitchen_sink.rb          # all components in one demo
 ruby examples/smoke_test.rb            # headless test of all components
 ```
+
+## Ecosystem
+
+| Gem | Description |
+|-----|-------------|
+| **[chamomile](https://github.com/chamomile-rb/chamomile)** | Core TUI framework (Elm Architecture event loop) |
+| **petals** | Reusable components (this gem) |
+| **[flourish](https://github.com/chamomile-rb/flourish)** | Terminal styling — colors, borders, padding, layout composition |
 
 ## Development
 
 ```sh
 bundle install
-bundle exec rspec        # run tests (304 specs)
+bundle exec rspec        # run tests
 bundle exec rubocop      # lint
 ```
 
