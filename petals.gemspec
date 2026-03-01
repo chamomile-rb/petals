@@ -17,5 +17,9 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "rspec", "~> 3.12"
   spec.add_development_dependency "rubocop", "~> 1.0"
+  spec.homepage = "https://github.com/chamomile-rb/petals"
   spec.metadata["rubygems_mfa_required"] = "true"
+  spec.metadata["homepage_uri"]          = spec.homepage
+  spec.metadata["source_code_uri"]       = "https://github.com/chamomile-rb/petals"
+  spec.metadata["changelog_uri"]         = "https://github.com/chamomile-rb/petals/blob/master/CHANGELOG.md"
 end
