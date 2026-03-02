@@ -15,7 +15,7 @@ class TimerStopwatchDemo
     @timed_out = false
   end
 
-  def init
+  def start
     Chamomile::Commands.batch(
       @timer.start_cmd,
       @stopwatch.start_cmd

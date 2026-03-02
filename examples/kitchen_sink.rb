@@ -32,7 +32,7 @@ class KitchenSink
     setup_timers
   end
 
-  def init
+  def start
     batch(
       @file_picker.init_cmd,
       @list.start_spinner,

@@ -42,7 +42,7 @@ class MyApp
     @spinner = Petals::Spinner.new(type: Petals::Spinners::DOT)
   end
 
-  def init
+  def start
     @spinner.tick_cmd
   end
 

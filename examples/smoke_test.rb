@@ -12,14 +12,14 @@ def tick = Chamomile::TickMsg.new(time: Time.now)
 def run_model(model, messages, label:)
   puts "=== #{label} ==="
 
-  # init
-  init_cmd = model.init
-  puts "init cmd: #{init_cmd ? "present" : "nil"}"
+  # start
+  start_cmd = model.start
+  puts "start cmd: #{start_cmd ? "present" : "nil"}"
 
   # If spinner tick_cmd, execute it (stub sleep)
-  if init_cmd
+  if start_cmd
     allow_sleep = Thread.new do
-      init_cmd.call
+      start_cmd.call
     rescue StandardError
       nil
     end
@@ -153,8 +153,8 @@ ts_demo = TimerStopwatchDemo.new
 ts_timer = ts_demo.instance_variable_get(:@timer)
 ts_sw = ts_demo.instance_variable_get(:@stopwatch)
 
-# Fake init without sleeping
-ts_demo.init
+# Fake start without sleeping
+ts_demo.start
 
 puts "=== Timer & Stopwatch Demo ==="
 puts "Initial view:"

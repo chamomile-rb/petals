@@ -13,7 +13,7 @@ class SpinnerDemo
     @spinner = Petals::Spinner.new(type: current_type)
   end
 
-  def init
+  def start
     @spinner.tick_cmd
   end
 

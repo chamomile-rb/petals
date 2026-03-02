@@ -16,7 +16,7 @@ class TextInputDemo
     @submitted = nil
   end
 
-  def init = nil
+  def start = nil
 
   def update(msg)
     if @submitted

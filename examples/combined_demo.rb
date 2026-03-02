@@ -15,7 +15,7 @@ class CombinedDemo
     @messages = []
   end
 
-  def init
+  def start
     @spinner.tick_cmd
   end
 
