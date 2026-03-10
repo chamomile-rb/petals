@@ -1,0 +1,31 @@
+module Petals
+  SpinnerTickMsg: untyped
+  SpinnerType: untyped
+
+  class Spinner
+    attr_reader id: String
+    attr_reader spinner_type: untyped
+
+    def initialize: (?type: untyped) -> void
+    def tick_cmd: () -> untyped
+    def update: (untyped msg) -> untyped?
+    def view: () -> String
+    def reset: () -> Spinner
+    def spinner_type=: (untyped type) -> void
+  end
+
+  module Spinners
+    LINE: untyped
+    DOT: untyped
+    MINI_DOT: untyped
+    JUMP: untyped
+    PULSE: untyped
+    POINTS: untyped
+    GLOBE: untyped
+    MOON: untyped
+    MONKEY: untyped
+    METER: untyped
+    HAMBURGER: untyped
+    ELLIPSIS: untyped
+  end
+end

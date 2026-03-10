@@ -3,9 +3,9 @@
 require_relative "lib/petals/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "petals"
+  spec.name          = "chamomile-petals"
   spec.version       = Petals::VERSION
-  spec.authors       = ["Chamomile Contributors"]
+  spec.authors       = ["Jack Killilea"]
   spec.summary       = "Reusable TUI components for the Chamomile framework"
   spec.description   = "Spinner, TextInput, and more — composable widgets for Chamomile TUI apps"
   spec.license       = "MIT"

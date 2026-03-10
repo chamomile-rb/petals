@@ -1,0 +1,17 @@
+module Petals
+  class LogView
+    attr_reader paused: bool
+    attr_reader line_count: Integer
+
+    def initialize: (?max_lines: Integer) -> void
+    def push: (String line) -> void
+    def pause!: () -> void
+    def resume!: () -> void
+    def scroll_up: (?Integer n) -> void
+    def scroll_down: (?Integer n) -> void
+    def scroll_to_bottom: () -> void
+    def at_bottom?: () -> bool
+    def render: (width: Integer, height: Integer) -> String
+    def clear: () -> void
+  end
+end

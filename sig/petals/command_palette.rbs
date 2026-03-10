@@ -1,0 +1,16 @@
+module Petals
+  class CommandPalette
+    Item: untyped
+
+    attr_reader query: String
+    attr_reader cursor: Integer
+
+    def initialize: (items: Array[Hash[Symbol, untyped]], ?placeholder: String) -> void
+    def show: () -> void
+    def hide: () -> void
+    def visible?: () -> bool
+    def handle_key: (untyped msg) -> untyped?
+    def render: (width: Integer, height: Integer) -> String
+    def filtered_items: () -> Array[untyped]
+  end
+end
