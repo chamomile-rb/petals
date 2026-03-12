@@ -42,7 +42,7 @@ module Petals
     end
 
     # Advance frame if msg is a matching SpinnerTickMsg; return cmd or nil.
-    def update(msg)
+    def handle(msg)
       return unless msg.is_a?(SpinnerTickMsg)
       return unless msg.id == @id && msg.tag == @tag
 
@@ -50,6 +50,8 @@ module Petals
       @tag += 1
       tick_cmd
     end
+
+    alias update handle
 
     # Current frame string.
     def view

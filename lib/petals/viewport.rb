@@ -18,21 +18,33 @@ module Petals
       @soft_wrap = false
     end
 
-    def set_width(new_width)
+    def width=(new_width)
       @width = new_width
       clamp_offset
       @x_offset = @x_offset.clamp(0, [max_horizontal_scroll, 0].max) unless @soft_wrap
     end
 
-    def set_height(new_height)
+    # Backward compat alias
+    alias set_width width=
+
+    def height=(new_height)
       @height = new_height
       clamp_offset
     end
 
-    def set_content(s)
-      @lines = s.split("\n", -1)
+    # Backward compat alias
+    alias set_height height=
+
+    def content=(s)
+      @lines = s.to_s.split("\n", -1)
       clamp_offset
       @x_offset = @x_offset.clamp(0, [max_horizontal_scroll, 0].max) unless @soft_wrap
+      self
+    end
+
+    # Backward compat — preserves the return-self convention
+    def set_content(s)
+      self.content = s
       self
     end
 
@@ -138,18 +150,20 @@ module Petals
       self
     end
 
-    # Elm protocol
-
-    def update(msg)
+    # Handle an incoming event.
+    def handle(msg)
       case msg
-      when Chamomile::KeyMsg
+      when Chamomile::KeyEvent
         handle_key(msg)
-      when Chamomile::MouseMsg
+      when Chamomile::MouseEvent
         handle_mouse(msg)
       end
 
       nil
     end
+
+    # Backward compat alias
+    alias update handle
 
     def view
       if @soft_wrap

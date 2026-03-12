@@ -8,14 +8,33 @@ module Petals
     attr_accessor :columns, :key_map, :height
     attr_reader :cursor, :rows
 
-    def initialize(columns: [], rows: [], height: 10, key_map: DEFAULT_KEY_MAP)
-      @columns = columns
+    # Accepts columns as keyword arg or via block DSL.
+    #
+    #   # Keyword form (original)
+    #   Table.new(columns: [Column.new(title: "Name", width: 20)], rows: rows)
+    #
+    #   # Block DSL form (new)
+    #   Table.new(rows: rows) do |t|
+    #     t.column "Name", width: 20
+    #     t.column "Size", width: 10
+    #   end
+    #
+    #   # Hash form (new)
+    #   Table.new(columns: [{ title: "Name", width: 20 }], rows: rows)
+    def initialize(columns: [], rows: [], height: 10, key_map: DEFAULT_KEY_MAP, &block)
+      @columns = normalize_columns(columns)
       @rows = rows
       @height = height
       @key_map = key_map
       @cursor = 0
       @offset = 0
       @focused = false
+
+      if block
+        builder = ColumnBuilder.new
+        block.call(builder)
+        @columns = builder.columns unless builder.columns.empty?
+      end
     end
 
     def rows=(rows)
@@ -69,16 +88,20 @@ module Petals
       @focused
     end
 
-    def update(msg)
+    # Handle an incoming event.
+    def handle(msg)
       return unless @focused
 
       case msg
-      when Chamomile::KeyMsg
+      when Chamomile::KeyEvent
         handle_key(msg)
       end
 
       nil
     end
+
+    # Backward compat alias
+    alias update handle
 
     def view
       header = render_header
@@ -88,7 +111,33 @@ module Petals
       [header, separator, body].compact.join("\n")
     end
 
+    # DSL builder for column definitions.
+    class ColumnBuilder
+      attr_reader :columns
+
+      def initialize
+        @columns = []
+      end
+
+      def column(title, width: 20)
+        @columns << Column.new(title: title, width: width)
+      end
+    end
+
     private
+
+    def normalize_columns(columns)
+      columns.map do |col|
+        case col
+        when Column
+          col
+        when Hash
+          Column.new(title: col[:title], width: col[:width] || 20)
+        else
+          col
+        end
+      end
+    end
 
     def row_count
       @rows.length

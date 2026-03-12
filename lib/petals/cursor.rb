@@ -74,7 +74,7 @@ module Petals
       }
     end
 
-    def update(msg)
+    def handle(msg)
       return unless msg.is_a?(CursorBlinkMsg)
       return unless @mode == MODE_BLINK && @focused
       return unless msg.id == @id && msg.tag == @tag
@@ -83,6 +83,8 @@ module Petals
       @tag += 1
       blink_cmd
     end
+
+    alias update handle
 
     def view
       return @char if @mode == MODE_HIDE

@@ -70,7 +70,7 @@ module Petals
       @remaining <= 0
     end
 
-    def update(msg)
+    def handle(msg)
       case msg
       when TimerTickMsg
         return unless msg.id == @id && msg.tag == @tag
@@ -86,6 +86,8 @@ module Petals
         end
       end
     end
+
+    alias update handle
 
     def view
       total = @remaining.ceil.to_i

@@ -64,7 +64,7 @@ module Petals
       @running
     end
 
-    def update(msg)
+    def handle(msg)
       return unless msg.is_a?(StopwatchTickMsg)
       return unless msg.id == @id && msg.tag == @tag
 
@@ -72,6 +72,8 @@ module Petals
       @tag += 1
       tick_cmd
     end
+
+    alias update handle
 
     def view
       total = @elapsed.ceil.to_i

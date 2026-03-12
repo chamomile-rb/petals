@@ -5,9 +5,9 @@
 
 require_relative "../lib/petals"
 
-def key(k, mod: []) = Chamomile::KeyMsg.new(key: k, mod: mod)
-def paste(text) = Chamomile::PasteMsg.new(content: text)
-def tick = Chamomile::TickMsg.new(time: Time.now)
+def key(k, mod: []) = Chamomile::KeyEvent.new(key: k, mod: mod)
+def paste(text) = Chamomile::PasteEvent.new(content: text)
+def tick = Chamomile::TickEvent.new(time: Time.now)
 
 def run_model(model, messages, label:)
   puts "=== #{label} ==="
@@ -100,7 +100,7 @@ sw.start_cmd
 puts "Running: #{sw.running?}"
 # Simulate a tick
 tick_msg = Petals::StopwatchTickMsg.new(id: sw.id, tag: sw.instance_variable_get(:@tag), time: Time.now)
-sw.update(tick_msg)
+sw.handle(tick_msg)
 puts "After 1 tick: #{sw.view} (elapsed=#{sw.elapsed})"
 sw.stop
 puts "Stopped: #{!sw.running?}"
@@ -117,12 +117,12 @@ puts "Running: #{timer.running?}"
 # Simulate ticks
 4.times do
   tick_msg = Petals::TimerTickMsg.new(id: timer.id, tag: timer.instance_variable_get(:@tag), time: Time.now)
-  timer.update(tick_msg)
+  timer.handle(tick_msg)
   puts "Tick: #{timer.view} (remaining=#{timer.remaining})"
 end
 # Final tick should produce timeout
 tick_msg = Petals::TimerTickMsg.new(id: timer.id, tag: timer.instance_variable_get(:@tag), time: Time.now)
-timer.update(tick_msg)
+timer.handle(tick_msg)
 puts "Timed out: #{timer.timed_out?}, view: #{timer.view}"
 timer.reset
 puts "After reset: #{timer.view}, timed_out: #{timer.timed_out?}"
@@ -140,7 +140,7 @@ pag.prev_page
 puts "After prev: #{pag.view} (page=#{pag.page})"
 pag.type = Petals::Paginator::TYPE_ARABIC
 puts "Arabic view: #{pag.view}"
-pag.update(key(:right))
+pag.handle(key(:right))
 puts "After right key: #{pag.view}"
 puts "Slice bounds (13 items): #{pag.slice_bounds(13).inspect}"
 puts "First page: #{pag.on_first_page?}, Last page: #{pag.on_last_page?}"
@@ -194,7 +194,7 @@ puts "Focused, cmd: #{cmd ? "present" : "nil"}"
 if cmd
   tag = cursor.instance_variable_get(:@tag)
   blink_msg = Petals::CursorBlinkMsg.new(id: cursor.id, tag: tag)
-  cmd2 = cursor.update(blink_msg)
+  cmd2 = cursor.handle(blink_msg)
   puts "After blink: blinked=#{cursor.blinked}, view=#{cursor.view.inspect}"
   puts "Chain cmd: #{cmd2 ? "present" : "nil"}"
 end
@@ -240,20 +240,20 @@ puts
 puts "=== Viewport ==="
 vp = Petals::Viewport.new(width: 40, height: 5)
 content = (0..19).map { |i| "Line #{i}: content here that is wide enough to scroll horizontally" }.join("\n")
-vp.set_content(content)
+vp.content = content
 puts "Initial (at_top=#{vp.at_top?}):"
 puts vp.view
 puts "---"
-vp.update(key("j"))
-vp.update(key("j"))
+vp.handle(key("j"))
+vp.handle(key("j"))
 puts "After 2x down:"
 puts vp.view
 puts "---"
-vp.update(key("G", mod: [:shift]))
+vp.handle(key("G", mod: [:shift]))
 puts "After goto_bottom (at_bottom=#{vp.at_bottom?}):"
 puts vp.view
 puts "---"
-vp.update(key("g"))
+vp.handle(key("g"))
 puts "After goto_top (at_top=#{vp.at_top?}):"
 puts vp.view
 # New: horizontal scroll
@@ -264,16 +264,16 @@ vp.scroll_left(5)
 # New: soft wrap
 vp2 = Petals::Viewport.new(width: 20, height: 5)
 vp2.soft_wrap = true
-vp2.set_content("This is a long line that should wrap at twenty characters.")
+vp2.content = "This is a long line that should wrap at twenty characters."
 puts "Soft wrap view:"
 puts vp2.view
 # New: ensure_visible
 vp.ensure_visible(10)
 puts "After ensure_visible(10), y_offset=#{vp.y_offset}"
 # New: dimension setters
-vp.set_width(60)
-vp.set_height(8)
-puts "After set_width(60)/set_height(8): w=#{vp.width} h=#{vp.height}"
+vp.width = 60
+vp.height = 8
+puts "After width=60/height=8: w=#{vp.width} h=#{vp.height}"
 puts
 
 # ---- Table ----
@@ -293,8 +293,8 @@ tbl = Petals::Table.new(columns: cols, rows: tbl_rows, height: 3).focus
 puts "Initial:"
 puts tbl.view
 puts "---"
-tbl.update(key("j"))
-tbl.update(key("j"))
+tbl.handle(key("j"))
+tbl.handle(key("j"))
 puts "After 2x down (cursor=#{tbl.cursor}):"
 puts tbl.view
 puts "---"
@@ -304,17 +304,17 @@ puts
 # ---- TextArea ----
 puts "=== TextArea ==="
 ta = Petals::TextArea.new(width: 30, height: 4, show_line_numbers: true).focus
-ta.update(key("H"))
-ta.update(key("e"))
-ta.update(key("l"))
-ta.update(key("l"))
-ta.update(key("o"))
-ta.update(key(:enter))
-ta.update(key("W"))
-ta.update(key("o"))
-ta.update(key("r"))
-ta.update(key("l"))
-ta.update(key("d"))
+ta.handle(key("H"))
+ta.handle(key("e"))
+ta.handle(key("l"))
+ta.handle(key("l"))
+ta.handle(key("o"))
+ta.handle(key(:enter))
+ta.handle(key("W"))
+ta.handle(key("o"))
+ta.handle(key("r"))
+ta.handle(key("l"))
+ta.handle(key("d"))
 puts "After typing 'Hello\\nWorld':"
 puts ta.view
 puts "---"
@@ -344,21 +344,21 @@ lst.title = "Fruits"
 puts "Initial:"
 puts lst.view
 puts "---"
-lst.update(key("j"))
-lst.update(key("j"))
+lst.handle(key("j"))
+lst.handle(key("j"))
 puts "After 2x down (cursor=#{lst.cursor}):"
 puts lst.view
 puts "---"
-lst.update(key("/"))
-lst.update(key("a"))
+lst.handle(key("/"))
+lst.handle(key("a"))
 puts "After filter 'a':"
 puts lst.view
 puts "---"
-lst.update(key(:enter))
+lst.handle(key(:enter))
 puts "After accept filter:"
 puts lst.view
 puts "---"
-lst.update(key(:escape))
+lst.handle(key(:escape))
 puts "After clear filter (items=#{lst.items.length}):"
 puts lst.view
 # New: infinite scroll
@@ -390,27 +390,27 @@ puts
 puts "=== FilePicker ==="
 fp = Petals::FilePicker.new(directory: Dir.pwd, height: 5)
 init_msg = fp.init_cmd.call
-fp.update(init_msg)
+fp.handle(init_msg)
 puts "Directory: #{fp.current_directory}"
 puts "View:"
 puts fp.view
 puts "---"
-fp.update(key(:down))
+fp.handle(key(:down))
 puts "After down (highlighted: #{fp.highlighted_path})"
 # New: page nav
-fp.update(key(:page_down))
+fp.handle(key(:page_down))
 puts "After page_down (highlighted: #{fp.highlighted_path})"
-fp.update(key("g"))
+fp.handle(key("g"))
 puts "After goto_top (highlighted: #{fp.highlighted_path})"
-fp.update(key("G", mod: [:shift]))
+fp.handle(key("G", mod: [:shift]))
 puts "After goto_bottom (highlighted: #{fp.highlighted_path})"
 # New: disabled selection
 fp2 = Petals::FilePicker.new(directory: Dir.pwd, height: 5, allowed_types: [".xyz_nonexistent"])
 init_msg2 = fp2.init_cmd.call
-fp2.update(init_msg2)
+fp2.handle(init_msg2)
 # Navigate to a file (skip dirs)
-10.times { fp2.update(key(:down)) }
-fp2.update(key(:enter))
+10.times { fp2.handle(key(:down)) }
+fp2.handle(key(:enter))
 sel, path = fp2.did_select_disabled_file?(key(:enter))
 puts "Disabled file selected: #{sel}, path: #{path&.split("/")&.last}"
 puts

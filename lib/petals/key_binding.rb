@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Petals
-  # Utilities for matching KeyMsg against normalized key maps.
+  # Utilities for matching KeyEvent against normalized key maps.
   module KeyBinding
     # Normalize a key map so mod arrays are sorted and frozen.
     # Call once at definition time to avoid per-keystroke allocations.
@@ -14,7 +14,7 @@ module Petals
       end.freeze
     end
 
-    # Check if a KeyMsg matches any binding for a named action.
+    # Check if a KeyEvent matches any binding for a named action.
     # Expects a normalized key map (from .normalize) for best performance.
     def self.key_matches?(msg, key_map, action)
       return false unless msg.is_a?(Chamomile::KeyMsg)

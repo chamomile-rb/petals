@@ -3,8 +3,7 @@
 require_relative "../lib/petals"
 
 class CombinedDemo
-  include Chamomile::Model
-  include Chamomile::Commands
+  include Chamomile::Application
 
   def initialize
     @spinner = Petals::Spinner.new(type: Petals::Spinners::DOT)
@@ -21,7 +20,7 @@ class CombinedDemo
 
   def update(msg)
     case msg
-    when Chamomile::KeyMsg
+    when Chamomile::KeyEvent
       return quit if msg.key == :escape
 
       if msg.key == :enter && !@input.value.empty?
@@ -31,8 +30,8 @@ class CombinedDemo
       end
     end
 
-    spin_cmd = @spinner.update(msg)
-    @input.update(msg)
+    spin_cmd = @spinner.handle(msg)
+    @input.handle(msg)
     spin_cmd
   end
 

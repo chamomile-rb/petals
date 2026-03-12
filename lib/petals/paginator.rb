@@ -72,9 +72,9 @@ module Petals
 
     # Elm protocol
 
-    def update(msg)
+    def handle(msg)
       case msg
-      when Chamomile::KeyMsg
+      when Chamomile::KeyEvent
         if KeyBinding.key_matches?(msg, @key_map, :prev_page)
           prev_page
         elsif KeyBinding.key_matches?(msg, @key_map, :next_page)
@@ -84,6 +84,8 @@ module Petals
 
       nil
     end
+
+    alias update handle
 
     def view
       case @type

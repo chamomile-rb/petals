@@ -13,8 +13,7 @@
 require_relative "../lib/petals"
 
 class KitchenSink
-  include Chamomile::Model
-  include Chamomile::Commands
+  include Chamomile::Application
 
   TABS = %w[Viewport TextArea List FilePicker Progress Table Timers].freeze
 
@@ -44,11 +43,11 @@ class KitchenSink
 
   def update(msg)
     case msg
-    when Chamomile::WindowSizeMsg
+    when Chamomile::ResizeEvent
       @width = msg.width
       @height = msg.height
       return nil
-    when Chamomile::KeyMsg
+    when Chamomile::KeyEvent
       return quit if msg.key == "q" && msg.mod.include?(:ctrl)
 
       if msg.mod.empty? && msg.key.is_a?(String) && ("1".."7").include?(msg.key)
@@ -81,7 +80,7 @@ class KitchenSink
     lorem = (1..100).map do |i|
       "#{i}. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
     end
-    @viewport.set_content(lorem.join("\n"))
+    @viewport.content = lorem.join("\n")
   end
 
   def setup_textarea
@@ -160,19 +159,19 @@ class KitchenSink
 
   def dispatch_to_tab(msg)
     case @tab
-    when 0 then @viewport.update(msg)
-    when 1 then @textarea.update(msg)
+    when 0 then @viewport.handle(msg)
+    when 1 then @textarea.handle(msg)
     when 2 then dispatch_list(msg)
-    when 3 then @file_picker.update(msg)
+    when 3 then @file_picker.handle(msg)
     when 4 then dispatch_progress(msg)
-    when 5 then @table.update(msg)
+    when 5 then @table.handle(msg)
     when 6 then dispatch_timers(msg)
     end
   end
 
   def dispatch_list(msg)
     cmds = []
-    cmds << @list.update(msg)
+    cmds << @list.handle(msg)
     spinner = @list.instance_variable_get(:@spinner)
     cmds << spinner.tick_cmd if msg.is_a?(Petals::SpinnerTickMsg) && msg.id == spinner.id
     batch_cmds(cmds)
@@ -180,19 +179,19 @@ class KitchenSink
 
   def dispatch_progress(msg)
     cmds = []
-    if msg.is_a?(Chamomile::KeyMsg)
+    if msg.is_a?(Chamomile::KeyEvent)
       cmds << @bar1.incr_percent(0.1) if msg.key == "a"
       cmds << @bar2.incr_percent(0.1) if msg.key == "b"
     end
-    cmds << @bar1.update(msg)
-    cmds << @bar2.update(msg)
+    cmds << @bar1.handle(msg)
+    cmds << @bar2.handle(msg)
     batch_cmds(cmds)
   end
 
   def dispatch_timers(msg)
     cmds = []
 
-    if msg.is_a?(Chamomile::KeyMsg)
+    if msg.is_a?(Chamomile::KeyEvent)
       case msg.key
       when "s" then cmds << (@stopwatch.running? ? @stopwatch.stop && nil : @stopwatch.start_cmd)
       when "t" then cmds << (@timer.running? ? @timer.stop && nil : @timer.start_cmd)
@@ -205,9 +204,9 @@ class KitchenSink
       end
     end
 
-    cmds << @stopwatch.update(msg)
-    cmds << @timer.update(msg)
-    cmds << @cursor.update(msg)
+    cmds << @stopwatch.handle(msg)
+    cmds << @timer.handle(msg)
+    cmds << @cursor.handle(msg)
 
     @timer_status = "DONE!" if msg.is_a?(Petals::TimerTimeoutMsg) && msg.id == @timer.id
 

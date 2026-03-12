@@ -59,9 +59,11 @@ module Petals
       end
     end
 
-    def update(_msg)
+    def handle(_msg)
       nil
     end
+
+    alias update handle
 
     private
 
