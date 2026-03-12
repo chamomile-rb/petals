@@ -52,7 +52,7 @@ module Petals
       read_dir_cmd(@current_directory)
     end
 
-    def update(msg)
+    def handle(msg)
       case msg
       when FilePickerReadDirMsg
         return unless msg.id == @id
@@ -61,10 +61,12 @@ module Petals
         @cursor = @cursor.clamp(0, [entries_size - 1, 0].max)
         clamp_offset
         nil
-      when Chamomile::KeyMsg
+      when Chamomile::KeyEvent
         handle_key(msg)
       end
     end
+
+    alias update handle
 
     def view
       return "  (empty)" if @entries.empty?
@@ -93,7 +95,7 @@ module Petals
     end
 
     def did_select_file?(msg)
-      return [false, nil] unless msg.is_a?(Chamomile::KeyMsg)
+      return [false, nil] unless msg.is_a?(Chamomile::KeyEvent)
 
       if @selected_path
         path = @selected_path
@@ -105,7 +107,7 @@ module Petals
     end
 
     def did_select_disabled_file?(msg)
-      return [false, nil] unless msg.is_a?(Chamomile::KeyMsg)
+      return [false, nil] unless msg.is_a?(Chamomile::KeyEvent)
 
       if @disabled_selected_path
         path = @disabled_selected_path

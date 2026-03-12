@@ -168,18 +168,20 @@ module Petals
       @last_char_offset = 0
     end
 
-    def update(msg)
+    def handle(msg)
       return unless @focused
 
       case msg
-      when Chamomile::KeyMsg
+      when Chamomile::KeyEvent
         handle_key(msg)
-      when Chamomile::PasteMsg
+      when Chamomile::PasteEvent
         handle_paste(msg)
       end
 
       nil
     end
+
+    alias update handle
 
     def view
       return "#{@prompt}#{@placeholder}" if @lines == [""] && !@placeholder.empty? && !@focused

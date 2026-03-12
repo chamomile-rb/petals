@@ -79,7 +79,7 @@ module Petals
       @animating
     end
 
-    def update(msg)
+    def handle(msg)
       return unless msg.is_a?(ProgressFrameMsg)
       return unless msg.id == @id && msg.tag == @tag
 
@@ -100,6 +100,8 @@ module Petals
         frame_cmd
       end
     end
+
+    alias update handle
 
     def view
       render_bar(@percent)

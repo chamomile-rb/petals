@@ -7,9 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `Table` block DSL: `Table.new(rows: rows) { |t| t.column "Name", width: 20 }`
+- `Table` hash column form: `Table.new(columns: [{ title: "Name", width: 20 }], rows: rows)`
+- `Viewport#width=`, `Viewport#height=`, `Viewport#content=` — Ruby-style setters
+
 ### Changed
 
-- Updated all examples to use `start` instead of `init` following the chamomile API rename
+- All components: `update(msg)` renamed to `handle(msg)` (`update` kept as backward-compat alias)
+- Internal type references updated to use `KeyEvent`/`MouseEvent`/`PasteEvent` names
+- README updated: all examples use `handle(msg)`, `=` setters, and Table block DSL
+
+### Deprecated
+
+- `update(msg)` on all components — use `handle(msg)` instead (alias still works)
+- `Viewport#set_width`, `Viewport#set_height`, `Viewport#set_content` — use `=` setters instead (old methods still work)
 
 ## [0.1.0] - 2026-02-27
 

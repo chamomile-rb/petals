@@ -65,20 +65,22 @@ module Petals
       recalc_offset
     end
 
-    # Elm protocol
-
-    def update(msg)
+    # Handle an incoming event. Primary API — replaces the old `update` name.
+    def handle(msg)
       return unless @focused
 
       case msg
-      when Chamomile::KeyMsg
+      when Chamomile::KeyEvent
         handle_key(msg)
-      when Chamomile::PasteMsg
+      when Chamomile::PasteEvent
         handle_paste(msg)
       end
 
       nil
     end
+
+    # Backward compat alias
+    alias update handle
 
     def view
       return "#{@prompt}#{@placeholder}" if @value.empty? && !@placeholder.empty? && !@focused

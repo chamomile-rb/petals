@@ -212,9 +212,9 @@ module Petals
       @spinner_visible
     end
 
-    def update(msg)
+    def handle(msg)
       case msg
-      when Chamomile::KeyMsg
+      when Chamomile::KeyEvent
         handle_key(msg)
       when SpinnerTickMsg
         @spinner.update(msg)
@@ -229,6 +229,8 @@ module Petals
         nil
       end
     end
+
+    alias update handle
 
     def view
       sections = []

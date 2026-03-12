@@ -3,8 +3,7 @@
 require_relative "../lib/petals"
 
 class TextInputDemo
-  include Chamomile::Model
-  include Chamomile::Commands
+  include Chamomile::Application
 
   def initialize
     @input = Petals::TextInput.new(
@@ -21,7 +20,7 @@ class TextInputDemo
   def update(msg)
     if @submitted
       case msg
-      when Chamomile::KeyMsg
+      when Chamomile::KeyEvent
         return quit if msg.key == "q"
 
         if msg.key == :enter
@@ -34,7 +33,7 @@ class TextInputDemo
     end
 
     case msg
-    when Chamomile::KeyMsg
+    when Chamomile::KeyEvent
       return quit if msg.key == :escape
 
       if msg.key == :enter
@@ -44,7 +43,7 @@ class TextInputDemo
       end
     end
 
-    @input.update(msg)
+    @input.handle(msg)
     nil
   end
 

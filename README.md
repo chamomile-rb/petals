@@ -1,6 +1,6 @@
 # Petals
 
-Reusable TUI components for the [Chamomile](https://github.com/chamomile-rb/chamomile) framework. Ported from Go's [Bubbles](https://github.com/charmbracelet/bubbles).
+Reusable TUI components for the [Chamomile](https://github.com/chamomile-rb/chamomile) framework.
 
 ## Components
 
@@ -35,23 +35,22 @@ gem "petals"
 require "petals"
 
 class MyApp
-  include Chamomile::Model
-  include Chamomile::Commands
+  include Chamomile::Application
 
   def initialize
     @spinner = Petals::Spinner.new(type: Petals::Spinners::DOT)
   end
 
-  def start
+  def on_start
     @spinner.tick_cmd
   end
 
+  on_key("q") { quit }
+
   def update(msg)
     case msg
-    when Chamomile::KeyMsg
-      return quit if msg.key == "q"
     when Petals::SpinnerTickMsg
-      return @spinner.update(msg)
+      return @spinner.handle(msg)
     end
     nil
   end
@@ -73,7 +72,7 @@ end
 @input.focus
 
 # In update:
-@input.update(msg)
+@input.handle(msg)
 
 # In view:
 @input.view  # "> Hello world" with reverse-video cursor
@@ -87,7 +86,7 @@ end
 cmd = @timer.start_cmd
 
 # In update — receives TimerTickMsg, returns TimerTimeoutMsg when done
-cmd = @timer.update(msg)
+cmd = @timer.handle(msg)
 @timer.timed_out?  # true when countdown reaches 0
 
 # Count-up stopwatch
@@ -103,10 +102,14 @@ cmd = @stopwatch.start_cmd
 
 ```ruby
 @viewport = Petals::Viewport.new(width: 80, height: 20)
-@viewport.set_content(long_text)
+@viewport.content = long_text
 
 # In update — responds to j/k, pgup/pgdn, g/G, mouse wheel
-cmd = @viewport.update(msg)
+cmd = @viewport.handle(msg)
+
+# Resize
+@viewport.width  = 100
+@viewport.height = 30
 
 # In view:
 @viewport.view  # visible portion of content
@@ -115,20 +118,25 @@ cmd = @viewport.update(msg)
 ### Table
 
 ```ruby
+# Block DSL form (recommended)
+@table = Petals::Table.new(rows: rows) do |t|
+  t.column "Name", width: 20
+  t.column "Size", width: 10
+end
+@table.focus
+
+# In update — responds to up/down/g/G
+cmd = @table.handle(msg)
+
+# In view:
+@table.view  # formatted table with highlighted cursor row
+
+# Keyword form also works
 columns = [
   Petals::Table::Column.new(title: "Name", width: 20),
   Petals::Table::Column.new(title: "Size", width: 10),
 ]
-rows = [["style.rb", "19.6 KB"], ["wrap.rb", "4.2 KB"]]
-
-@table = Petals::Table.new(columns: columns, rows: rows, height: 10)
-@table.focus
-
-# In update — responds to up/down/g/G
-cmd = @table.update(msg)
-
-# In view:
-@table.view  # formatted table with highlighted cursor row
+@table = Petals::Table.new(columns: columns, rows: rows)
 ```
 
 ### List
@@ -141,7 +149,7 @@ delegates = items.map { |i| Petals::List::DefaultItem.new(title: i) }
 @list.title = "Fruits"
 
 # In update — responds to arrows, /, filter input
-cmd = @list.update(msg)
+cmd = @list.handle(msg)
 
 # In view — rendered list with filter bar, pagination, help
 @list.view
@@ -155,7 +163,7 @@ cmd = @list.update(msg)
 # Navigate
 @pager.next_page
 @pager.prev_page
-@pager.update(key_msg)  # responds to arrows, h/l, page up/down
+@pager.handle(key_msg)  # responds to arrows, h/l, page up/down
 
 # Display
 @pager.view  # "○ ● ○ ○ ○" (dot mode)
@@ -170,20 +178,20 @@ page_items = items[start, length]
 
 ## Component Protocol
 
-All components follow the Elm Architecture pattern:
+All components follow the event-driven pattern:
 
 ```ruby
 # Initialize
 component = Component.new(options...)
 
-# Update — returns a command or nil
-cmd = component.update(msg)
+# Handle events — returns a command or nil
+cmd = component.handle(msg)
 
 # Render — returns a String
 component.view
 ```
 
-Components are mutable classes — `update` modifies internal state and returns a command (or nil), so no model reassignment is needed.
+Components are mutable classes — `handle` modifies internal state and returns a command (or nil), so no model reassignment is needed.
 
 ## Key Binding
 
@@ -211,7 +219,7 @@ ruby examples/smoke_test.rb            # headless test of all components
 
 | Gem | Description |
 |-----|-------------|
-| **[chamomile](https://github.com/chamomile-rb/chamomile)** | Core TUI framework (Elm Architecture event loop) |
+| **[chamomile](https://github.com/chamomile-rb/chamomile)** | Core TUI framework (event-driven event loop) |
 | **petals** | Reusable components (this gem) |
 | **[flourish](https://github.com/chamomile-rb/flourish)** | Terminal styling — colors, borders, padding, layout composition |
 

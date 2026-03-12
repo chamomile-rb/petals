@@ -3,8 +3,7 @@
 require_relative "../lib/petals"
 
 class SpinnerDemo
-  include Chamomile::Model
-  include Chamomile::Commands
+  include Chamomile::Application
 
   TYPES = %i[LINE DOT MINI_DOT JUMP PULSE POINTS GLOBE MOON MONKEY METER HAMBURGER ELLIPSIS].freeze
 
@@ -19,7 +18,7 @@ class SpinnerDemo
 
   def update(msg)
     case msg
-    when Chamomile::KeyMsg
+    when Chamomile::KeyEvent
       case msg.key
       when "q" then return quit
       when :up, "k"
@@ -33,7 +32,7 @@ class SpinnerDemo
       end
     end
 
-    @spinner.update(msg)
+    @spinner.handle(msg)
   end
 
   def view
