@@ -45,10 +45,10 @@ class MyApp
     @spinner.tick_cmd
   end
 
-  on_key("q") { quit }
-
   def update(msg)
     case msg
+    when Chamomile::KeyEvent
+      return quit if msg.key == "q"
     when Petals::SpinnerTickMsg
       return @spinner.handle(msg)
     end
@@ -163,7 +163,7 @@ cmd = @list.handle(msg)
 # Navigate
 @pager.next_page
 @pager.prev_page
-@pager.handle(key_msg)  # responds to arrows, h/l, page up/down
+@pager.handle(msg)  # responds to arrows, h/l, page up/down
 
 # Display
 @pager.view  # "○ ● ○ ○ ○" (dot mode)
