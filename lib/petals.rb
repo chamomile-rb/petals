@@ -1,29 +1,10 @@
 # frozen_string_literal: true
 
 require "chamomile"
-require_relative "petals/version"
-require_relative "petals/key_binding"
-require_relative "petals/spinner/types"
-require_relative "petals/spinner"
-require_relative "petals/text_input/key_map"
-require_relative "petals/text_input"
-require_relative "petals/stopwatch"
-require_relative "petals/timer"
-require_relative "petals/paginator/key_map"
-require_relative "petals/paginator"
-require_relative "petals/cursor"
-require_relative "petals/help"
-require_relative "petals/progress"
-require_relative "petals/viewport/key_map"
-require_relative "petals/viewport"
-require_relative "petals/file_picker/key_map"
-require_relative "petals/file_picker"
-require_relative "petals/table/key_map"
-require_relative "petals/table"
-require_relative "petals/text_area/key_map"
-require_relative "petals/text_area"
-require_relative "petals/list/key_map"
-require_relative "petals/list"
-require_relative "petals/render_cache"
-require_relative "petals/log_view"
-require_relative "petals/command_palette"
+
+warn "[DEPRECATION] The `chamomile-petals` gem is deprecated. " \
+     "All components are now part of `chamomile` (v1.0+). " \
+     "Replace `require \"petals\"` with `require \"chamomile\"` " \
+     "and change `Petals::` to `Chamomile::`."
+
+Petals = Chamomile unless defined?(Petals)

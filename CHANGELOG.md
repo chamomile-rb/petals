@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-03-12
+
+### Changed
+
+- **DEPRECATED**: This gem is now a shim that depends on `chamomile ~> 1.0`. All components have been merged into the main Chamomile gem. Replace `gem "petals"` with `gem "chamomile"` and change `Petals::` to `Chamomile::`.
+
 ## [Unreleased]
 
 ### Added

@@ -1,5 +1,0 @@
-module Petals
-  module RenderCache
-    def cached_render: (width: Integer, height: Integer, cache_key: untyped) { () -> untyped } -> untyped
-  end
-end
